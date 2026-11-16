@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as StudioIdRouteImport } from './routes/studio.$id'
 import { Route as ApiPublicPreviewSyncRouteImport } from './routes/api/public/preview-sync'
+import { Route as ApiPublicUpdateNudgeRouteImport } from './routes/api/public/update-nudge'
 import { Route as StudioIdImagesRouteImport } from './routes/studio_.$id.images'
 
 const IndexRoute = IndexRouteImport.update({
@@ -29,6 +30,11 @@ const ApiPublicPreviewSyncRoute = ApiPublicPreviewSyncRouteImport.update({
   path: '/api/public/preview-sync',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicUpdateNudgeRoute = ApiPublicUpdateNudgeRouteImport.update({
+  id: '/api/public/update-nudge',
+  path: '/api/public/update-nudge',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const StudioIdImagesRoute = StudioIdImagesRouteImport.update({
   id: '/studio_/$id/images',
   path: '/studio/$id/images',
@@ -39,12 +45,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/studio/$id': typeof StudioIdRoute
   '/api/public/preview-sync': typeof ApiPublicPreviewSyncRoute
+  '/api/public/update-nudge': typeof ApiPublicUpdateNudgeRoute
   '/studio/$id/images': typeof StudioIdImagesRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/studio/$id': typeof StudioIdRoute
   '/api/public/preview-sync': typeof ApiPublicPreviewSyncRoute
+  '/api/public/update-nudge': typeof ApiPublicUpdateNudgeRoute
   '/studio/$id/images': typeof StudioIdImagesRoute
 }
 export interface FileRoutesById {
@@ -52,19 +60,30 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/studio/$id': typeof StudioIdRoute
   '/api/public/preview-sync': typeof ApiPublicPreviewSyncRoute
+  '/api/public/update-nudge': typeof ApiPublicUpdateNudgeRoute
   '/studio_/$id/images': typeof StudioIdImagesRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/studio/$id' | '/api/public/preview-sync' | '/studio/$id/images'
+    | '/'
+    | '/studio/$id'
+    | '/api/public/preview-sync'
+    | '/api/public/update-nudge'
+    | '/studio/$id/images'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/studio/$id' | '/api/public/preview-sync' | '/studio/$id/images'
+  to:
+    | '/'
+    | '/studio/$id'
+    | '/api/public/preview-sync'
+    | '/api/public/update-nudge'
+    | '/studio/$id/images'
   id:
     | '__root__'
     | '/'
     | '/studio/$id'
     | '/api/public/preview-sync'
+    | '/api/public/update-nudge'
     | '/studio_/$id/images'
   fileRoutesById: FileRoutesById
 }
@@ -72,6 +91,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   StudioIdRoute: typeof StudioIdRoute
   ApiPublicPreviewSyncRoute: typeof ApiPublicPreviewSyncRoute
+  ApiPublicUpdateNudgeRoute: typeof ApiPublicUpdateNudgeRoute
   StudioIdImagesRoute: typeof StudioIdImagesRoute
 }
 
@@ -98,6 +118,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicPreviewSyncRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/update-nudge': {
+      id: '/api/public/update-nudge'
+      path: '/api/public/update-nudge'
+      fullPath: '/api/public/update-nudge'
+      preLoaderRoute: typeof ApiPublicUpdateNudgeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/studio_/$id/images': {
       id: '/studio_/$id/images'
       path: '/studio/$id/images'
@@ -112,6 +139,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   StudioIdRoute: StudioIdRoute,
   ApiPublicPreviewSyncRoute: ApiPublicPreviewSyncRoute,
+  ApiPublicUpdateNudgeRoute: ApiPublicUpdateNudgeRoute,
   StudioIdImagesRoute: StudioIdImagesRoute,
 }
 export const routeTree = rootRouteImport

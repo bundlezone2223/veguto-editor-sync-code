@@ -14,3 +14,4 @@
 - [x] Correct the important-word button to bold selected inline text and support both star formats; verified save/export/reload and 9 focused tests.
 - [x] Write the Miraculous article into the studio (text proofread, 29 fitting pictures embedded) and fix Arabic articles turning left-to-right; checked on computer and phone.
 - [x] Add a Commands op that replaces the article text while keeping every picture in place (article pasted after `===ARTICLE===`); verified on Miraculous in the editor.
+- [x] Add a version label and a "check for update" nudge button on the home page, plus a GitHub sync helper that compares version numbers.

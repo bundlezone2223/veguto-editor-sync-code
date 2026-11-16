@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { MoreVertical, Pencil, Trash2 } from "lucide-react";
 import { WikiLayout } from "@/components/WikiLayout";
+import { UpdateCheck } from "@/components/UpdateCheck";
 import { ProjectMetaModal, type ProjectMetaValues } from "@/components/ProjectMetaModal";
 import { deleteProject, loadProjects, newId, upsertProject, type Project } from "@/lib/projects-store";
 import { installSampleArticles } from "@/lib/sample-article";
@@ -93,6 +94,7 @@ function HomePage() {
 
   return (
     <WikiLayout>
+      <UpdateCheck />
       <button
         onClick={() => setOpen(true)}
         className="w-full h-40 md:h-48 rounded-2xl gradient-hero border border-accent-pink/30 flex items-center justify-center gap-3 text-2xl md:text-3xl font-bold text-[oklch(0.35_0.15_330)] hover:opacity-90 transition-opacity shadow-[var(--card-shadow)]"
