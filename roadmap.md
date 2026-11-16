@@ -1,0 +1,16 @@
+- [x] Make the editor menu opaque.
+- [x] Add TS paste import and render the article automatically.
+- [x] Verify parsing tests and paste-to-editor flow.
+- [x] Add "إدراج صور من JSON" menu item: server-side download → base64, insert at anchor/heading.
+- [x] Smart list handling in "تحويل نص منسق": blank lines no longer split a list; list ends at a heading/quote/paragraph.
+- [x] Tests for JSON image placement and list parsing pass; browser flow verified end-to-end.
+- [x] Add metadata JSON import with remote thumbnail download and Base64 storage.
+- [x] Name downloaded article files from the article title.
+- [x] Allow removing an empty image placeholder with Backspace.
+- [x] Add a bold emphasis section and `**نص مهم**` syntax to formatted-text import.
+- [x] Run parser tests and verify metadata import, Base64 image storage, image-placeholder deletion, emphasis parsing, and title-based downloads.
+- [x] Move article storage to IndexedDB with one-time localStorage migration; guard saves with toasts; keep the JSON images dialog open with an error instead of crashing.
+- [x] Verify 12 large images insert, save and survive reload; all tests pass.
+- [x] Correct the important-word button to bold selected inline text and support both star formats; verified save/export/reload and 9 focused tests.
+- [x] Write the Miraculous article into the studio (text proofread, 29 fitting pictures embedded) and fix Arabic articles turning left-to-right; checked on computer and phone.
+- [x] Add a Commands op that replaces the article text while keeping every picture in place (article pasted after `===ARTICLE===`); verified on Miraculous in the editor.
