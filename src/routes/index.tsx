@@ -93,7 +93,7 @@ function HomePage() {
   };
 
   return (
-    <WikiLayout>
+    <WikiLayout withNav>
       <UpdateCheck />
       <button
         onClick={() => setOpen(true)}

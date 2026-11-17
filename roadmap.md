@@ -15,3 +15,7 @@
 - [x] Write the Miraculous article into the studio (text proofread, 29 fitting pictures embedded) and fix Arabic articles turning left-to-right; checked on computer and phone.
 - [x] Add a Commands op that replaces the article text while keeping every picture in place (article pasted after `===ARTICLE===`); verified on Miraculous in the editor.
 - [x] Add a version label and a "check for update" nudge button on the home page, plus a GitHub sync helper that compares version numbers.
+- [x] Bottom navigation bar (Projects / Dashboard) on the home and dashboard pages.
+- [x] Dashboard: control the main site's home page (banner, numbers, latest articles, sections, featured blocks, quick links, Discord) with live preview, publish to GitHub.
+- [x] Dashboard: publish articles to the main site with draft/published/changed labels; upload a full project ZIP to the code repo. Verified on temporary GitHub branches.
+- [ ] Main Veguto Wiki site reads `content/home.json` and `content/articles/*` — waiting on the main site's project/repo from the user.
