@@ -67,16 +67,34 @@ export { APP_VERSION };
 /** Folder on GitHub that only GitHub keeps (update records); never compared or removed. */
 export const REMOTE_ONLY_PREFIX = "history/";
 
+/**
+ * Server / run-time files of this hosting copy. The GitHub copy carries only the site itself,
+ * so these are never compared, uploaded, removed or pulled.
+ */
+export const RUNTIME_FILES = [
+  ".lovable/", ".npmrc", ".prettierignore", ".prettierrc", ".gitignore", "AGENTS.md", "README.md",
+  "bun.lock", "bunfig.toml", "package.json", "package-lock.json", "components.json", "eslint.config.js",
+  "tsconfig.json", "vite.config.ts", "vitest.config.ts", "wrangler.json",
+  "src/router.tsx", "src/server.ts", "src/start.ts", "src/routeTree.gen.ts", "src/routes/README.md",
+  "src/lib/error-capture.ts", "src/lib/error-page.ts", "src/lib/lovable-error-reporting.ts",
+  "src/test/",
+];
+
+export function isRuntimeFile(p: string) {
+  return RUNTIME_FILES.some((r) => (r.endsWith("/") ? p.startsWith(r) : p === r));
+}
+
 export type FileDiff = { added: string[]; changed: string[]; removed: string[] };
 
 /** Compares two "path → git blob sha" lists. Files under history/ on GitHub are ignored. */
 export function diffFiles(local: Record<string, string>, remote: Record<string, string>): FileDiff {
   const added: string[] = [], changed: string[] = [], removed: string[] = [];
   for (const [p, sha] of Object.entries(local)) {
+    if (isRuntimeFile(p)) continue;
     if (!(p in remote)) added.push(p);
     else if (remote[p] !== sha) changed.push(p);
   }
-  for (const p of Object.keys(remote)) if (!(p in local) && !p.startsWith(REMOTE_ONLY_PREFIX)) removed.push(p);
+  for (const p of Object.keys(remote)) if (!(p in local) && !p.startsWith(REMOTE_ONLY_PREFIX) && !isRuntimeFile(p)) removed.push(p);
   return { added: added.sort(), changed: changed.sort(), removed: removed.sort() };
 }
 

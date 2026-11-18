@@ -1,4 +1,4 @@
-import { compareVersions, decideSync, diffCount, diffFiles, readVersion, updateStatus } from "@/lib/app-update";
+import { isRuntimeFile, compareVersions, decideSync, diffCount, diffFiles, readVersion, updateStatus } from "@/lib/app-update";
 import { gitBlobSha } from "@/lib/source-sync.server";
 
 describe("version comparison", () => {
@@ -41,5 +41,16 @@ describe("file comparison for the update button", () => {
   });
   it("hashes files the same way GitHub does", () => {
     expect(gitBlobSha(new TextEncoder().encode("hello\n"))).toBe("ce013625030ba8dba906f756967f9e9ca394464a");
+  });
+});
+
+describe("runtime files stay out of the GitHub copy", () => {
+  it("ignores server files on both sides", () => {
+    const d = diffFiles({ "src/server.ts": "1", "package.json": "2", "src/routes/index.tsx": "3" }, { "src/start.ts": "9" });
+    expect(d).toEqual({ added: ["src/routes/index.tsx"], changed: [], removed: [] });
+  });
+  it("treats site files as site files", () => {
+    expect(isRuntimeFile("src/lib/article-commands.ts")).toBe(false);
+    expect(isRuntimeFile("src/test/setup.ts")).toBe(true);
   });
 });

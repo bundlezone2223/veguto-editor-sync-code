@@ -1,0 +1,47 @@
+{
+  "kind": "editor-sync",
+  "version": "1.3.0",
+  "previousVersion": "1.2.0",
+  "previousSha": "c656cc2d384e97cb53130323f307814902c12dd7",
+  "savedAt": "2026-11-18T23:19:58.152446Z",
+  "added": [
+    "scripts/__pycache__/github-sync.cpython-313.pyc"
+  ],
+  "changed": [
+    "scripts/github-sync.py",
+    "src/lib/app-update.test.ts",
+    "src/lib/app-update.ts",
+    "src/version.ts"
+  ],
+  "removed": [
+    ".gitignore",
+    ".lovable/north-star/north-star.md",
+    ".lovable/plan/commands-button-in-the-article-editor-2026-11-15.md",
+    ".lovable/project.json",
+    ".npmrc",
+    ".prettierignore",
+    ".prettierrc",
+    "AGENTS.md",
+    "README.md",
+    "bun.lock",
+    "bunfig.toml",
+    "components.json",
+    "eslint.config.js",
+    "package-lock.json",
+    "package.json",
+    "src/lib/error-capture.ts",
+    "src/lib/error-page.ts",
+    "src/lib/lovable-error-reporting.ts",
+    "src/routeTree.gen.ts",
+    "src/router.tsx",
+    "src/routes/README.md",
+    "src/server.ts",
+    "src/start.ts",
+    "src/test/app-routing.test.tsx",
+    "src/test/setup.ts",
+    "tsconfig.json",
+    "vite.config.ts",
+    "vitest.config.ts",
+    "wrangler.json"
+  ]
+}

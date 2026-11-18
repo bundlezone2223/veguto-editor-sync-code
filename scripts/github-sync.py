@@ -16,6 +16,19 @@ API = f"https://api.github.com/repos/{REPO}"
 SKIP = (".git/", "node_modules/", ".jj/")
 # Dashboard update records live only on GitHub; push keeps them and pull leaves them there.
 KEEP_REMOTE = ("history/",)
+# Server / run-time files of this hosting copy: never compared, sent, removed or pulled
+# (keep in sync with RUNTIME_FILES in src/lib/app-update.ts).
+RUNTIME = (".lovable/", ".npmrc", ".prettierignore", ".prettierrc", ".gitignore", "AGENTS.md", "README.md",
+           "bun.lock", "bunfig.toml", "package.json", "package-lock.json", "components.json", "eslint.config.js",
+           "tsconfig.json", "vite.config.ts", "vitest.config.ts", "wrangler.json",
+           "src/router.tsx", "src/server.ts", "src/start.ts", "src/routeTree.gen.ts", "src/routes/README.md",
+           "src/lib/error-capture.ts", "src/lib/error-page.ts", "src/lib/lovable-error-reporting.ts", "src/test/")
+
+
+def is_runtime(p):
+    return any(p.startswith(r) if r.endswith("/") else p == r for r in RUNTIME)
+
+
 TOKEN = os.environ.get("GITHUB_PERSONAL_ACCESS_TOKEN")
 H = {"Accept": "application/vnd.github+json", **({"Authorization": f"Bearer {TOKEN}"} if TOKEN else {})}
 
@@ -44,7 +57,7 @@ def remote_version():
 def local_files():
     out = subprocess.run(["rg", "--files", "--hidden", "-g", "!.git", "-g", "!node_modules", "-g", "!.env*", "-g", "!.jj"],
                          capture_output=True, text=True, cwd=ROOT).stdout.split()
-    return [f for f in out if not f.startswith(SKIP)]
+    return [f for f in out if not f.startswith(SKIP) and not is_runtime(f)]
 
 
 def blob_sha(data):
@@ -57,7 +70,7 @@ def file_diff():
     remote = {}
     if ref.ok:
         t = requests.get(f"{API}/git/trees/{ref.json()['object']['sha']}?recursive=1", headers=H); t.raise_for_status()
-        remote = {e["path"]: e["sha"] for e in t.json()["tree"] if e["type"] == "blob" and not e["path"].startswith(KEEP_REMOTE)}
+        remote = {e["path"]: e["sha"] for e in t.json()["tree"] if e["type"] == "blob" and not e["path"].startswith(KEEP_REMOTE) and not is_runtime(e["path"])}
     local = {f: blob_sha(open(os.path.join(ROOT, f), "rb").read()) for f in local_files()}
     return sorted(p for p in local if remote.get(p) != local[p]) + sorted(p for p in remote if p not in local)
 
@@ -83,7 +96,7 @@ def push(force=False):
     parents = [ref.json()["object"]["sha"]] if ref.ok else []
     if ref.ok:
         old = requests.get(f"{API}/git/trees/{parents[0]}?recursive=1", headers=H); old.raise_for_status()
-        tree += [{"path": e["path"], "mode": e["mode"], "type": "blob", "sha": e["sha"]} for e in old.json()["tree"] if e["type"] == "blob" and e["path"].startswith(KEEP_REMOTE)]
+        tree += [{"path": e["path"], "mode": e["mode"], "type": "blob", "sha": e["sha"]} for e in old.json()["tree"] if e["type"] == "blob" and (e["path"].startswith(KEEP_REMOTE) or is_runtime(e["path"]))]
     t = requests.post(f"{API}/git/trees", headers=H, json={"tree": tree}); t.raise_for_status()
     c = requests.post(f"{API}/git/commits", headers=H, json={"message": f"Veguto editor {local_version()}", "tree": t.json()["sha"], "parents": parents}); c.raise_for_status()
     sha = c.json()["sha"]
@@ -98,7 +111,7 @@ def pull(apply=False):
         for m in tar.getmembers():
             if not m.isfile(): continue
             path = m.name.split("/", 1)[1] if "/" in m.name else m.name
-            if path.startswith(SKIP + KEEP_REMOTE) or os.path.basename(path).startswith(".env"): continue
+            if path.startswith(SKIP + KEEP_REMOTE) or is_runtime(path) or os.path.basename(path).startswith(".env"): continue
             remote[path] = tar.extractfile(m).read()
     local = set(local_files())
     changed = [p for p, d in remote.items() if p not in local or open(os.path.join(ROOT, p), "rb").read() != d]
