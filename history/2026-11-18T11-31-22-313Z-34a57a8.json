@@ -1,0 +1,1520 @@
+{
+  "sha": "34a57a8ceaf1d02188e8634a8cc6e27cbd9c98b0",
+  "message": "Update site from open-your-world-main",
+  "repo": "bundlezone2223/veguto",
+  "files": [
+    {
+      "filename": ".gitignore",
+      "status": "added",
+      "additions": 32,
+      "deletions": 0
+    },
+    {
+      "filename": ".lovable/project.json",
+      "status": "added",
+      "additions": 5,
+      "deletions": 0
+    },
+    {
+      "filename": ".prettierignore",
+      "status": "added",
+      "additions": 8,
+      "deletions": 0
+    },
+    {
+      "filename": ".prettierrc",
+      "status": "added",
+      "additions": 6,
+      "deletions": 0
+    },
+    {
+      "filename": ".veguto",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 1
+    },
+    {
+      "filename": "AGENTS.md",
+      "status": "added",
+      "additions": 17,
+      "deletions": 0
+    },
+    {
+      "filename": "README.md",
+      "status": "added",
+      "additions": 24,
+      "deletions": 0
+    },
+    {
+      "filename": "bun.lock",
+      "status": "added",
+      "additions": 1339,
+      "deletions": 0
+    },
+    {
+      "filename": "bunfig.toml",
+      "status": "added",
+      "additions": 6,
+      "deletions": 0
+    },
+    {
+      "filename": "components.json",
+      "status": "added",
+      "additions": 22,
+      "deletions": 0
+    },
+    {
+      "filename": "eslint.config.js",
+      "status": "added",
+      "additions": 40,
+      "deletions": 0
+    },
+    {
+      "filename": "package.json",
+      "status": "added",
+      "additions": 93,
+      "deletions": 0
+    },
+    {
+      "filename": "public/favicon.ico",
+      "status": "added",
+      "additions": 0,
+      "deletions": 0
+    },
+    {
+      "filename": "public/icons/apple-touch-icon.png",
+      "status": "added",
+      "additions": 0,
+      "deletions": 0
+    },
+    {
+      "filename": "public/icons/favicon-32.png",
+      "status": "added",
+      "additions": 0,
+      "deletions": 0
+    },
+    {
+      "filename": "public/icons/icon-192.png",
+      "status": "added",
+      "additions": 0,
+      "deletions": 0
+    },
+    {
+      "filename": "public/icons/icon-512.png",
+      "status": "added",
+      "additions": 0,
+      "deletions": 0
+    },
+    {
+      "filename": "public/icons/icon-maskable-512.png",
+      "status": "added",
+      "additions": 0,
+      "deletions": 0
+    },
+    {
+      "filename": "public/manifest.json",
+      "status": "added",
+      "additions": 34,
+      "deletions": 0
+    },
+    {
+      "filename": "public/robots.txt",
+      "status": "added",
+      "additions": 2,
+      "deletions": 0
+    },
+    {
+      "filename": "roadmap.md",
+      "status": "added",
+      "additions": 12,
+      "deletions": 0
+    },
+    {
+      "filename": "scripts/generate-content.ts",
+      "status": "added",
+      "additions": 109,
+      "deletions": 0
+    },
+    {
+      "filename": "src/assets/article-placeholder.jpg.asset.json",
+      "status": "added",
+      "additions": 11,
+      "deletions": 0
+    },
+    {
+      "filename": "src/assets/icons/discord.svg",
+      "status": "added",
+      "additions": 1,
+      "deletions": 0
+    },
+    {
+      "filename": "src/assets/icons/instagram.svg",
+      "status": "added",
+      "additions": 1,
+      "deletions": 0
+    },
+    {
+      "filename": "src/assets/icons/youtube.svg",
+      "status": "added",
+      "additions": 1,
+      "deletions": 0
+    },
+    {
+      "filename": "src/assets/veguto-logo.svg",
+      "status": "added",
+      "additions": 1,
+      "deletions": 0
+    },
+    {
+      "filename": "src/components/article-blocks.tsx",
+      "status": "added",
+      "additions": 197,
+      "deletions": 0
+    },
+    {
+      "filename": "src/components/article-card.tsx",
+      "status": "added",
+      "additions": 55,
+      "deletions": 0
+    },
+    {
+      "filename": "src/components/article-renderer.tsx",
+      "status": "added",
+      "additions": 48,
+      "deletions": 0
+    },
+    {
+      "filename": "src/components/expanding-search.tsx",
+      "status": "added",
+      "additions": 61,
+      "deletions": 0
+    },
+    {
+      "filename": "src/components/home-feed.tsx",
+      "status": "added",
+      "additions": 116,
+      "deletions": 0
+    },
+    {
+      "filename": "src/components/letter-filter.tsx",
+      "status": "added",
+      "additions": 53,
+      "deletions": 0
+    },
+    {
+      "filename": "src/components/search-bar.tsx",
+      "status": "added",
+      "additions": 44,
+      "deletions": 0
+    },
+    {
+      "filename": "src/components/site-chrome.tsx",
+      "status": "added",
+      "additions": 201,
+      "deletions": 0
+    },
+    {
+      "filename": "src/components/site-layout.tsx",
+      "status": "added",
+      "additions": 90,
+      "deletions": 0
+    },
+    {
+      "filename": "src/components/ui/accordion.tsx",
+      "status": "added",
+      "additions": 51,
+      "deletions": 0
+    },
+    {
+      "filename": "src/components/ui/alert-dialog.tsx",
+      "status": "added",
+      "additions": 115,
+      "deletions": 0
+    },
+    {
+      "filename": "src/components/ui/alert.tsx",
+      "status": "added",
+      "additions": 49,
+      "deletions": 0
+    },
+    {
+      "filename": "src/components/ui/aspect-ratio.tsx",
+      "status": "added",
+      "additions": 5,
+      "deletions": 0
+    },
+    {
+      "filename": "src/components/ui/avatar.tsx",
+      "status": "added",
+      "additions": 47,
+      "deletions": 0
+    },
+    {
+      "filename": "src/components/ui/badge.tsx",
+      "status": "added",
+      "additions": 32,
+      "deletions": 0
+    },
+    {
+      "filename": "src/components/ui/breadcrumb.tsx",
+      "status": "added",
+      "additions": 101,
+      "deletions": 0
+    },
+    {
+      "filename": "src/components/ui/button.tsx",
+      "status": "added",
+      "additions": 49,
+      "deletions": 0
+    },
+    {
+      "filename": "src/components/ui/calendar.tsx",
+      "status": "added",
+      "additions": 177,
+      "deletions": 0
+    },
+    {
+      "filename": "src/components/ui/card.tsx",
+      "status": "added",
+      "additions": 55,
+      "deletions": 0
+    },
+    {
+      "filename": "src/components/ui/carousel.tsx",
+      "status": "added",
+      "additions": 240,
+      "deletions": 0
+    },
+    {
+      "filename": "src/components/ui/chart.tsx",
+      "status": "added",
+      "additions": 331,
+      "deletions": 0
+    },
+    {
+      "filename": "src/components/ui/checkbox.tsx",
+      "status": "added",
+      "additions": 26,
+      "deletions": 0
+    },
+    {
+      "filename": "src/components/ui/collapsible.tsx",
+      "status": "added",
+      "additions": 11,
+      "deletions": 0
+    },
+    {
+      "filename": "src/components/ui/command.tsx",
+      "status": "added",
+      "additions": 143,
+      "deletions": 0
+    },
+    {
+      "filename": "src/components/ui/context-menu.tsx",
+      "status": "added",
+      "additions": 187,
+      "deletions": 0
+    },
+    {
+      "filename": "src/components/ui/dialog.tsx",
+      "status": "added",
+      "additions": 104,
+      "deletions": 0
+    },
+    {
+      "filename": "src/components/ui/drawer.tsx",
+      "status": "added",
+      "additions": 98,
+      "deletions": 0
+    },
+    {
+      "filename": "src/components/ui/dropdown-menu.tsx",
+      "status": "added",
+      "additions": 188,
+      "deletions": 0
+    },
+    {
+      "filename": "src/components/ui/form.tsx",
+      "status": "added",
+      "additions": 171,
+      "deletions": 0
+    },
+    {
+      "filename": "src/components/ui/hover-card.tsx",
+      "status": "added",
+      "additions": 27,
+      "deletions": 0
+    },
+    {
+      "filename": "src/components/ui/input-otp.tsx",
+      "status": "added",
+      "additions": 69,
+      "deletions": 0
+    },
+    {
+      "filename": "src/components/ui/input.tsx",
+      "status": "added",
+      "additions": 22,
+      "deletions": 0
+    },
+    {
+      "filename": "src/components/ui/label.tsx",
+      "status": "added",
+      "additions": 21,
+      "deletions": 0
+    },
+    {
+      "filename": "src/components/ui/menubar.tsx",
+      "status": "added",
+      "additions": 229,
+      "deletions": 0
+    },
+    {
+      "filename": "src/components/ui/navigation-menu.tsx",
+      "status": "added",
+      "additions": 120,
+      "deletions": 0
+    },
+    {
+      "filename": "src/components/ui/pagination.tsx",
+      "status": "added",
+      "additions": 98,
+      "deletions": 0
+    },
+    {
+      "filename": "src/components/ui/popover.tsx",
+      "status": "added",
+      "additions": 31,
+      "deletions": 0
+    },
+    {
+      "filename": "src/components/ui/progress.tsx",
+      "status": "added",
+      "additions": 25,
+      "deletions": 0
+    },
+    {
+      "filename": "src/components/ui/radio-group.tsx",
+      "status": "added",
+      "additions": 36,
+      "deletions": 0
+    },
+    {
+      "filename": "src/components/ui/resizable.tsx",
+      "status": "added",
+      "additions": 37,
+      "deletions": 0
+    },
+    {
+      "filename": "src/components/ui/scroll-area.tsx",
+      "status": "added",
+      "additions": 44,
+      "deletions": 0
+    },
+    {
+      "filename": "src/components/ui/select.tsx",
+      "status": "added",
+      "additions": 152,
+      "deletions": 0
+    },
+    {
+      "filename": "src/components/ui/separator.tsx",
+      "status": "added",
+      "additions": 24,
+      "deletions": 0
+    },
+    {
+      "filename": "src/components/ui/sheet.tsx",
+      "status": "added",
+      "additions": 122,
+      "deletions": 0
+    },
+    {
+      "filename": "src/components/ui/sidebar.tsx",
+      "status": "added",
+      "additions": 744,
+      "deletions": 0
+    },
+    {
+      "filename": "src/components/ui/skeleton.tsx",
+      "status": "added",
+      "additions": 7,
+      "deletions": 0
+    },
+    {
+      "filename": "src/components/ui/slider.tsx",
+      "status": "added",
+      "additions": 23,
+      "deletions": 0
+    },
+    {
+      "filename": "src/components/ui/sonner.tsx",
+      "status": "added",
+      "additions": 23,
+      "deletions": 0
+    },
+    {
+      "filename": "src/components/ui/switch.tsx",
+      "status": "added",
+      "additions": 27,
+      "deletions": 0
+    },
+    {
+      "filename": "src/components/ui/table.tsx",
+      "status": "added",
+      "additions": 94,
+      "deletions": 0
+    },
+    {
+      "filename": "src/components/ui/tabs.tsx",
+      "status": "added",
+      "additions": 53,
+      "deletions": 0
+    },
+    {
+      "filename": "src/components/ui/textarea.tsx",
+      "status": "added",
+      "additions": 21,
+      "deletions": 0
+    },
+    {
+      "filename": "src/components/ui/toggle-group.tsx",
+      "status": "added",
+      "additions": 57,
+      "deletions": 0
+    },
+    {
+      "filename": "src/components/ui/toggle.tsx",
+      "status": "added",
+      "additions": 42,
+      "deletions": 0
+    },
+    {
+      "filename": "src/components/ui/tooltip.tsx",
+      "status": "added",
+      "additions": 32,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/articles/cats-and-animals.ts",
+      "status": "added",
+      "additions": 20,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/articles/chibi-cute-avatars.ts",
+      "status": "added",
+      "additions": 17,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/articles/cosplay-basics.ts",
+      "status": "added",
+      "additions": 19,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/articles/cozy-gaming.ts",
+      "status": "added",
+      "additions": 17,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/articles/creepypasta-horror.ts",
+      "status": "added",
+      "additions": 19,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/articles/custom-brushes-textures.ts",
+      "status": "added",
+      "additions": 19,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/articles/dark-aesthetics.ts",
+      "status": "added",
+      "additions": 19,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/articles/discord-communities.ts",
+      "status": "added",
+      "additions": 17,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/articles/drawing-fundamentals.ts",
+      "status": "added",
+      "additions": 19,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/articles/furry-fandom.ts",
+      "status": "added",
+      "additions": 19,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/articles/gaming-genres-map.ts",
+      "status": "added",
+      "additions": 17,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/articles/index.ts",
+      "status": "added",
+      "additions": 112,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/articles/indie-rpgs-modding.ts",
+      "status": "added",
+      "additions": 19,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/articles/intro-to-anime.ts",
+      "status": "added",
+      "additions": 19,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/articles/isekai-fantasy.ts",
+      "status": "added",
+      "additions": 17,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/articles/kawaii-aesthetic.ts",
+      "status": "added",
+      "additions": 17,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/articles/lofi-retro-y2k.ts",
+      "status": "added",
+      "additions": 19,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/articles/manga-manhwa-novels.ts",
+      "status": "added",
+      "additions": 19,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/articles/mbti-personality.ts",
+      "status": "added",
+      "additions": 20,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/articles/music-for-aesthetics.ts",
+      "status": "added",
+      "additions": 17,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/articles/nekomimi-kemonomimi.ts",
+      "status": "added",
+      "additions": 17,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/articles/pixel-art-guide.ts",
+      "status": "added",
+      "additions": 19,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/articles/roleplay-and-oc.ts",
+      "status": "added",
+      "additions": 17,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/articles/types.ts",
+      "status": "added",
+      "additions": 18,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/articles/voice-acting-asmr.ts",
+      "status": "added",
+      "additions": 17,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/articles/vtubers-pngtubers.ts",
+      "status": "added",
+      "additions": 19,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/articles/vtubing-starter-guide.ts",
+      "status": "added",
+      "additions": 54,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/articles/what-are-memes.ts",
+      "status": "added",
+      "additions": 20,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/categories/categories.ts",
+      "status": "added",
+      "additions": 64,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/feed-sections.ts",
+      "status": "added",
+      "additions": 26,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/16-personalities.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/8bit.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/animals.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/anime-cat-ears.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/anime.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/another-world.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/anthro-art.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/art-fundamentals.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/aseprite.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/asmr.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/catgirl.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/cats.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/character-lore.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/chibi-style.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/chibi.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/convention.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/cosplay.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/costume.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/cozy-games.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/cozy-gaming.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/creepypasta.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/custom-brushes.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/custom-overlays.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/cute-aesthetic.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/cute-animals.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/cute-avatars.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/cyber-goth.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/cyberpunk.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/dark-aesthetics.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/discord-servers.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/discord.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/drawing.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/emo.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/enneagram.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/fanart.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/fandom.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/fantasy-anime.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/farm-sim.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/furries.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/furry.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/fursona.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/game-genres.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/game-mods.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/gaming.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/gothic.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/grunge.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/horror-rpgs.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/indie-games.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/indie-horror.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/indie-rpgs.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/internet-culture.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/isekai.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/kawaii-art.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/kawaii.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/kemonomimi.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/kittens.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/light-novels.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/line-art.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/live2d.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/lofi.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/manga.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/manhua.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/manhwa.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/mbti.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/meme-formats.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/memes.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/microphone.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/modding.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/music.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/nekomimi.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/obs.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/oc.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/online-communities.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/original-character.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/pastel.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/personality-types.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/pet-care.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/pixel-art.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/playlist.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/pngtubers.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/props.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/reincarnation.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/retro-aesthetic.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/roleplay.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/shonen.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/shoujo.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/sketching.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/slice-of-life.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/soft-aesthetic.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/soundtrack.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/sprite-art.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/streamer-aesthetics.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/streaming-setup.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/tagging.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/tags.ts",
+      "status": "added",
+      "additions": 85,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/textures.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/types.ts",
+      "status": "added",
+      "additions": 12,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/video-games.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/viral-images.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/virtual-assets.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/voice-acting.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/voiceover.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/vtube-studio.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/vtuber.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/vtubers.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/vtubing.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/webtoons.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/wholesome-games.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/wigs.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/content/tags/y2k.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "src/hooks/use-mobile.tsx",
+      "status": "added",
+      "additions": 19,
+      "deletions": 0
+    },
+    {
+      "filename": "src/lib/api/example.functions.ts",
+      "status": "added",
+      "additions": 22,
+      "deletions": 0
+    },
+    {
+      "filename": "src/lib/config.server.ts",
+      "status": "added",
+      "additions": 26,
+      "deletions": 0
+    },
+    {
+      "filename": "src/lib/error-capture.ts",
+      "status": "added",
+      "additions": 27,
+      "deletions": 0
+    },
+    {
+      "filename": "src/lib/error-page.ts",
+      "status": "added",
+      "additions": 30,
+      "deletions": 0
+    },
+    {
+      "filename": "src/lib/lovable-error-reporting.ts",
+      "status": "added",
+      "additions": 36,
+      "deletions": 0
+    },
+    {
+      "filename": "src/lib/utils.ts",
+      "status": "added",
+      "additions": 6,
+      "deletions": 0
+    },
+    {
+      "filename": "src/routeTree.gen.ts",
+      "status": "added",
+      "additions": 262,
+      "deletions": 0
+    },
+    {
+      "filename": "src/router.tsx",
+      "status": "added",
+      "additions": 16,
+      "deletions": 0
+    },
+    {
+      "filename": "src/routes/README.md",
+      "status": "added",
+      "additions": 21,
+      "deletions": 0
+    },
+    {
+      "filename": "src/routes/__root.tsx",
+      "status": "added",
+      "additions": 141,
+      "deletions": 0
+    },
+    {
+      "filename": "src/routes/about.tsx",
+      "status": "added",
+      "additions": 66,
+      "deletions": 0
+    },
+    {
+      "filename": "src/routes/articles.tsx",
+      "status": "added",
+      "additions": 120,
+      "deletions": 0
+    },
+    {
+      "filename": "src/routes/categories.tsx",
+      "status": "added",
+      "additions": 88,
+      "deletions": 0
+    },
+    {
+      "filename": "src/routes/category.$id.tsx",
+      "status": "added",
+      "additions": 77,
+      "deletions": 0
+    },
+    {
+      "filename": "src/routes/index.tsx",
+      "status": "added",
+      "additions": 135,
+      "deletions": 0
+    },
+    {
+      "filename": "src/routes/search.tsx",
+      "status": "added",
+      "additions": 71,
+      "deletions": 0
+    },
+    {
+      "filename": "src/routes/sitemap[.]xml.ts",
+      "status": "added",
+      "additions": 54,
+      "deletions": 0
+    },
+    {
+      "filename": "src/routes/tag.$slug.tsx",
+      "status": "added",
+      "additions": 68,
+      "deletions": 0
+    },
+    {
+      "filename": "src/routes/tags.tsx",
+      "status": "added",
+      "additions": 72,
+      "deletions": 0
+    },
+    {
+      "filename": "src/routes/wiki.$id.tsx",
+      "status": "added",
+      "additions": 116,
+      "deletions": 0
+    },
+    {
+      "filename": "src/server.ts",
+      "status": "added",
+      "additions": 54,
+      "deletions": 0
+    },
+    {
+      "filename": "src/start.ts",
+      "status": "added",
+      "additions": 22,
+      "deletions": 0
+    },
+    {
+      "filename": "src/styles.css",
+      "status": "added",
+      "additions": 252,
+      "deletions": 0
+    },
+    {
+      "filename": "src/test/app-routing.test.tsx",
+      "status": "added",
+      "additions": 17,
+      "deletions": 0
+    },
+    {
+      "filename": "src/test/setup.ts",
+      "status": "added",
+      "additions": 20,
+      "deletions": 0
+    },
+    {
+      "filename": "tsconfig.json",
+      "status": "added",
+      "additions": 27,
+      "deletions": 0
+    },
+    {
+      "filename": "vite.config.ts",
+      "status": "added",
+      "additions": 15,
+      "deletions": 0
+    },
+    {
+      "filename": "vitest.config.ts",
+      "status": "added",
+      "additions": 16,
+      "deletions": 0
+    },
+    {
+      "filename": "wrangler.json",
+      "status": "added",
+      "additions": 14,
+      "deletions": 0
+    }
+  ],
+  "savedAt": "2026-11-18T11:31:22.313Z"
+}
