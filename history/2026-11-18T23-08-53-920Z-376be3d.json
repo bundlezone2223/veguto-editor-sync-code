@@ -1,0 +1,24 @@
+{
+  "kind": "editor-sync",
+  "version": "1.2.0",
+  "previousVersion": "1.2.0",
+  "previousSha": "376be3d48b6864e323a9c99bd846e685ac563222",
+  "savedAt": "2026-11-18T23:08:53.920Z",
+  "added": [
+    "src/test/app-routing.test.tsx"
+  ],
+  "changed": [
+    ".lovable/project.json",
+    "AGENTS.md",
+    "bun.lock",
+    "bunfig.toml",
+    "package.json",
+    "src/lib/error-capture.ts",
+    "src/lib/lovable-error-reporting.ts",
+    "src/router.tsx",
+    "src/routes/README.md",
+    "src/server.ts",
+    "src/start.ts"
+  ],
+  "removed": []
+}
