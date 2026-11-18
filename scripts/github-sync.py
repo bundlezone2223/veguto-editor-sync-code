@@ -14,6 +14,8 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 REPO = "bundlezone2223/veguto-editor-sync-code"
 API = f"https://api.github.com/repos/{REPO}"
 SKIP = (".git/", "node_modules/", ".jj/")
+# Dashboard update records live only on GitHub; push keeps them and pull leaves them there.
+KEEP_REMOTE = ("history/",)
 TOKEN = os.environ.get("GITHUB_PERSONAL_ACCESS_TOKEN")
 H = {"Accept": "application/vnd.github+json", **({"Authorization": f"Bearer {TOKEN}"} if TOKEN else {})}
 
@@ -60,6 +62,9 @@ def push(force=False):
         b.raise_for_status(); tree.append({"path": f, "mode": "100644", "type": "blob", "sha": b.json()["sha"]})
     ref = requests.get(f"{API}/git/ref/heads/main", headers=H)
     parents = [ref.json()["object"]["sha"]] if ref.ok else []
+    if ref.ok:
+        old = requests.get(f"{API}/git/trees/{parents[0]}?recursive=1", headers=H); old.raise_for_status()
+        tree += [{"path": e["path"], "mode": e["mode"], "type": "blob", "sha": e["sha"]} for e in old.json()["tree"] if e["type"] == "blob" and e["path"].startswith(KEEP_REMOTE)]
     t = requests.post(f"{API}/git/trees", headers=H, json={"tree": tree}); t.raise_for_status()
     c = requests.post(f"{API}/git/commits", headers=H, json={"message": f"Veguto editor {local_version()}", "tree": t.json()["sha"], "parents": parents}); c.raise_for_status()
     sha = c.json()["sha"]
@@ -74,7 +79,7 @@ def pull(apply=False):
         for m in tar.getmembers():
             if not m.isfile(): continue
             path = m.name.split("/", 1)[1] if "/" in m.name else m.name
-            if path.startswith(SKIP) or os.path.basename(path).startswith(".env"): continue
+            if path.startswith(SKIP + KEEP_REMOTE) or os.path.basename(path).startswith(".env"): continue
             remote[path] = tar.extractfile(m).read()
     local = set(local_files())
     changed = [p for p, d in remote.items() if p not in local or open(os.path.join(ROOT, p), "rb").read() != d]

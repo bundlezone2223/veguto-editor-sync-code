@@ -10,7 +10,7 @@ import { GithubPanel } from "@/components/dashboard/GithubPanel";
 import { GhostButton, PrimaryButton } from "@/components/dashboard/ui";
 import { loadProjects, type Project } from "@/lib/projects-store";
 import { DEFAULT_SITE_CONFIG, loadSiteConfig, saveSiteConfig, type SiteConfig } from "@/lib/site-config";
-import { DEFAULT_GITHUB_SETTINGS, commitFiles, isRepoName, loadGithubSettings, type GithubSettings } from "@/lib/github-api";
+import { DEFAULT_GITHUB_SETTINGS, commitFiles, loadGithubSettings, type GithubSettings } from "@/lib/github-api";
 import { CONTENT_DIR } from "@/lib/publish-article";
 
 export const Route = createFileRoute("/dashboard")({
@@ -55,7 +55,7 @@ function DashboardPage() {
   };
 
   const publishLayout = async () => {
-    if (!settings.token || !isRepoName(settings.siteRepo)) { toast.error("أضف رمز GitHub ومستودع الموقع الرئيسي أولا"); setTab("github"); return; }
+    
     setPublishing(true);
     try {
       const res = await commitFiles({

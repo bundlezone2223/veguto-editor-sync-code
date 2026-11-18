@@ -1,8 +1,10 @@
 /**
- * Minimal GitHub client that runs in the browser with the user's own token
- * (saved only in this browser), so no secret key ever sits on a public server.
+ * Minimal GitHub client. Requests go through a server function that holds the
+ * saved GITHUB_PERSONAL_ACCESS_TOKEN and only reaches the two fixed repos.
  */
-const API = "https://api.github.com";
+import { HISTORY_REPO, SITE_REPO, githubProxy } from "./github-proxy.functions";
+
+export const SERVER_TOKEN = "@server";
 const SETTINGS_KEY = "veguto:github-settings";
 
 export type GithubSettings = {
@@ -16,18 +18,16 @@ export type GithubSettings = {
 };
 
 export const DEFAULT_GITHUB_SETTINGS: GithubSettings = {
-  token: "", siteRepo: "", siteBranch: "main", codeRepo: "bundlezone2223/veguto-editor-sync-code", codeBranch: "main",
+  token: SERVER_TOKEN, siteRepo: SITE_REPO, siteBranch: "main", codeRepo: SITE_REPO, codeBranch: "main",
 };
+export { SITE_REPO, HISTORY_REPO };
 
 export function loadGithubSettings(): GithubSettings {
-  try {
-    const raw = localStorage.getItem(SETTINGS_KEY);
-    return { ...DEFAULT_GITHUB_SETTINGS, ...(raw ? JSON.parse(raw) : {}) };
-  } catch { return { ...DEFAULT_GITHUB_SETTINGS }; }
+  return { ...DEFAULT_GITHUB_SETTINGS };
 }
 
 export function saveGithubSettings(s: GithubSettings) {
-  try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(s)); } catch { /* ignore */ }
+  void s; try { localStorage.removeItem(SETTINGS_KEY); } catch { /* ignore */ }
 }
 
 export function isRepoName(v: string) {
@@ -37,18 +37,19 @@ export function isRepoName(v: string) {
 /** A file to write: text (utf-8) or binary given as Base64. */
 export type RepoFile = { path: string; text?: string; base64?: string };
 
-async function gh(token: string, path: string, init: RequestInit = {}) {
-  const res = await fetch(`${API}${path}`, {
-    ...init,
-    headers: { Accept: "application/vnd.github+json", Authorization: `Bearer ${token}`, "Content-Type": "application/json", ...(init.headers ?? {}) },
-  });
-  if (!res.ok) {
-    const body = await res.text();
-    let msg = body;
-    try { msg = JSON.parse(body).message ?? body; } catch { /* plain text */ }
+async function raw(path: string, init: { method?: string; body?: string | undefined; accept?: string } = {}) {
+  return githubProxy({ data: { method: init.method ?? "GET", path, body: init.body, accept: init.accept } });
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export async function gh(_token: string, path: string, init: { method?: string; body?: string | undefined } = {}) {
+  const res = await raw(path, init);
+  if (res.status >= 300) {
+    let msg = res.text;
+    try { msg = JSON.parse(res.text).message ?? res.text; } catch { /* plain text */ }
     throw new Error(`GitHub ${res.status}: ${msg}`);
   }
-  return res.status === 204 ? null : res.json();
+  return res.text ? JSON.parse(res.text) : null;
 }
 
 export async function checkRepoAccess(token: string, repo: string): Promise<{ ok: boolean; message: string }> {
@@ -114,11 +115,48 @@ export async function commitFiles(opts: {
 
 /** Reads a JSON file from the repo, or null when it does not exist. */
 export async function readRepoJson<T>(token: string, repo: string, branch: string, path: string): Promise<T | null> {
+  void token;
   try {
-    const r = await fetch(`${API}/repos/${repo}/contents/${path}?ref=${encodeURIComponent(branch)}`, {
-      headers: { Accept: "application/vnd.github.raw+json", Authorization: `Bearer ${token}` },
-    });
-    if (!r.ok) return null;
-    return (await r.json()) as T;
+    const r = await raw(`/repos/${repo}/contents/${path}?ref=${encodeURIComponent(branch)}`, { accept: "application/vnd.github.raw+json" });
+    if (r.status >= 300) return null;
+    return JSON.parse(r.text) as T;
   } catch { return null; }
+}
+
+/** An empty repo (409) or missing branch (404) simply has nothing to list. */
+function emptyRepo(e: unknown): null {
+  if (e instanceof Error && /GitHub 40[49]/.test(e.message)) return null;
+  throw e;
+}
+
+export type TreeEntry = { path: string; type: "blob" | "tree"; size?: number };
+export async function listTree(repo: string, ref: string): Promise<TreeEntry[]> {
+  const t = await gh(SERVER_TOKEN, `/repos/${repo}/git/trees/${encodeURIComponent(ref)}?recursive=1`).catch(emptyRepo);
+  return (t?.tree ?? []).map((e: TreeEntry) => ({ path: e.path, type: e.type, size: e.size }));
+}
+
+export type CommitInfo = { sha: string; message: string; date: string; author: string };
+export async function listCommits(repo: string, branch: string, page = 1): Promise<CommitInfo[]> {
+  const list = await gh(SERVER_TOKEN, `/repos/${repo}/commits?sha=${encodeURIComponent(branch)}&per_page=30&page=${page}`).catch(emptyRepo);
+  return (list ?? []).map((c: { sha: string; commit: { message: string; author: { date: string; name: string } } }) => ({
+    sha: c.sha, message: c.commit.message, date: c.commit.author.date, author: c.commit.author.name,
+  }));
+}
+
+export type ChangedFile = { filename: string; status: string; additions: number; deletions: number };
+export async function commitChanges(repo: string, sha: string): Promise<ChangedFile[]> {
+  const c = await gh(SERVER_TOKEN, `/repos/${repo}/commits/${sha}`);
+  return (c?.files ?? []).map((f: ChangedFile) => ({ filename: f.filename, status: f.status, additions: f.additions, deletions: f.deletions }));
+}
+
+export async function readRepoText(repo: string, ref: string, path: string): Promise<string | null> {
+  const r = await raw(`/repos/${repo}/contents/${path.split("/").map(encodeURIComponent).join("/")}?ref=${encodeURIComponent(ref)}`, { accept: "application/vnd.github.raw+json" });
+  return r.status >= 300 ? null : r.text;
+}
+
+/** Saves a small record (message, sha, changed files — never the files themselves) to the history repo. */
+export async function recordHistory(entry: { sha: string; message: string; repo: string; files: ChangedFile[] }) {
+  const stamp = new Date().toISOString().replace(/[:.]/g, "-");
+  const text = JSON.stringify({ ...entry, savedAt: new Date().toISOString() }, null, 2);
+  await commitFiles({ token: SERVER_TOKEN, repo: HISTORY_REPO, branch: "main", message: `History: ${entry.message}`, files: [{ path: `history/${stamp}-${entry.sha.slice(0, 7)}.json`, text }] });
 }
