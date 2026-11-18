@@ -19,3 +19,4 @@
 - [x] Dashboard: control the main site's home page (banner, numbers, latest articles, sections, featured blocks, quick links, Discord) with live preview, publish to GitHub.
 - [x] Dashboard: publish articles to the main site with draft/published/changed labels; upload a full project ZIP to the code repo. Verified on temporary GitHub branches.
 - [ ] Main Veguto Wiki site reads `content/home.json` and `content/articles/*` — waiting on the main site's project/repo from the user.
+- [x] Make "check for update" compare the real files with GitHub: same files → match message, different files → send them to GitHub (old copy kept in history), newer GitHub version → copyable prompt.

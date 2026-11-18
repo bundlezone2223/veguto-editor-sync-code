@@ -63,3 +63,35 @@ export async function sendNudge(info: { status: UpdateStatus; local: string; rem
 }
 
 export { APP_VERSION };
+
+/** Folder on GitHub that only GitHub keeps (update records); never compared or removed. */
+export const REMOTE_ONLY_PREFIX = "history/";
+
+export type FileDiff = { added: string[]; changed: string[]; removed: string[] };
+
+/** Compares two "path → git blob sha" lists. Files under history/ on GitHub are ignored. */
+export function diffFiles(local: Record<string, string>, remote: Record<string, string>): FileDiff {
+  const added: string[] = [], changed: string[] = [], removed: string[] = [];
+  for (const [p, sha] of Object.entries(local)) {
+    if (!(p in remote)) added.push(p);
+    else if (remote[p] !== sha) changed.push(p);
+  }
+  for (const p of Object.keys(remote)) if (!(p in local) && !p.startsWith(REMOTE_ONLY_PREFIX)) removed.push(p);
+  return { added: added.sort(), changed: changed.sort(), removed: removed.sort() };
+}
+
+export function diffCount(d: FileDiff) {
+  return d.added.length + d.changed.length + d.removed.length;
+}
+
+/**
+ * What the update button does:
+ * - GitHub has a higher version → ask (prompt) to update the site, never overwrite GitHub.
+ * - same version and same files → nothing to do.
+ * - otherwise (files differ, or the site is newer) → send the site's files to GitHub.
+ */
+export function decideSync(status: UpdateStatus, changedFiles: number): "same" | "push" | "pull-prompt" {
+  if (status === "site-older") return "pull-prompt";
+  if (status === "same" && changedFiles === 0) return "same";
+  return "push";
+}

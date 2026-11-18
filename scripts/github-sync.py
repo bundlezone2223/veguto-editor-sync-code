@@ -7,7 +7,7 @@
 
 Repository metadata (.git), dependencies and .env files are never sent or overwritten.
 """
-import base64, io, os, re, subprocess, sys, tarfile
+import base64, hashlib, io, os, re, subprocess, sys, tarfile
 import requests
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -47,10 +47,29 @@ def local_files():
     return [f for f in out if not f.startswith(SKIP)]
 
 
+def blob_sha(data):
+    return hashlib.sha1(b"blob %d\0" % len(data) + data).hexdigest()
+
+
+def file_diff():
+    """Files that differ between this copy and GitHub (history/ on GitHub is ignored)."""
+    ref = requests.get(f"{API}/git/ref/heads/main", headers=H)
+    remote = {}
+    if ref.ok:
+        t = requests.get(f"{API}/git/trees/{ref.json()['object']['sha']}?recursive=1", headers=H); t.raise_for_status()
+        remote = {e["path"]: e["sha"] for e in t.json()["tree"] if e["type"] == "blob" and not e["path"].startswith(KEEP_REMOTE)}
+    local = {f: blob_sha(open(os.path.join(ROOT, f), "rb").read()) for f in local_files()}
+    return sorted(p for p in local if remote.get(p) != local[p]) + sorted(p for p in remote if p not in local)
+
+
 def status():
     lv, rv = local_version(), remote_version()
     state = "github-older" if rv is None else {0: "same", -1: "site-older", 1: "github-older"}[cmp(lv, rv)]
-    print(f"site={lv} github={rv} -> {state}"); return state
+    diff = file_diff()
+    if state == "same" and diff: state = "files-differ"
+    print(f"site={lv} github={rv} files-different={len(diff)} -> {state}")
+    for p in diff[:40]: print("  ~", p)
+    return state
 
 
 def push(force=False):
