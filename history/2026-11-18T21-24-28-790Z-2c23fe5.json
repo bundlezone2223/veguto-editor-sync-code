@@ -1,0 +1,14 @@
+{
+  "kind": "editor-sync",
+  "version": "1.2.0",
+  "previousVersion": "1.2.0",
+  "previousSha": "2c23fe54f79850836e7f9382a2131e9819a4b262",
+  "savedAt": "2026-11-18T21:24:28.790Z",
+  "added": [
+    ".lovable/north-star/north-star.md",
+    ".lovable/plan/commands-button-in-the-article-editor-2026-11-15.md",
+    ".lovable/project.json"
+  ],
+  "changed": [],
+  "removed": []
+}
