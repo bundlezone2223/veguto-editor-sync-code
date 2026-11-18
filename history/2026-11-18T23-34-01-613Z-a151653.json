@@ -1,0 +1,170 @@
+{
+  "sha": "a151653ba2420dd10ac1fcedd6aad0d2a23575c6",
+  "message": "File manager: 0 written, 27 removed",
+  "repo": "bundlezone2223/veguto",
+  "files": [
+    {
+      "filename": "src/content/articles/cats-and-animals.ts",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 20
+    },
+    {
+      "filename": "src/content/articles/chibi-cute-avatars.ts",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 17
+    },
+    {
+      "filename": "src/content/articles/cosplay-basics.ts",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 19
+    },
+    {
+      "filename": "src/content/articles/cozy-gaming.ts",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 17
+    },
+    {
+      "filename": "src/content/articles/creepypasta-horror.ts",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 19
+    },
+    {
+      "filename": "src/content/articles/custom-brushes-textures.ts",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 19
+    },
+    {
+      "filename": "src/content/articles/dark-aesthetics.ts",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 19
+    },
+    {
+      "filename": "src/content/articles/discord-communities.ts",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 17
+    },
+    {
+      "filename": "src/content/articles/drawing-fundamentals.ts",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 19
+    },
+    {
+      "filename": "src/content/articles/furry-fandom.ts",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 19
+    },
+    {
+      "filename": "src/content/articles/gaming-genres-map.ts",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 17
+    },
+    {
+      "filename": "src/content/articles/indie-rpgs-modding.ts",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 19
+    },
+    {
+      "filename": "src/content/articles/intro-to-anime.ts",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 19
+    },
+    {
+      "filename": "src/content/articles/isekai-fantasy.ts",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 17
+    },
+    {
+      "filename": "src/content/articles/kawaii-aesthetic.ts",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 17
+    },
+    {
+      "filename": "src/content/articles/lofi-retro-y2k.ts",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 19
+    },
+    {
+      "filename": "src/content/articles/manga-manhwa-novels.ts",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 19
+    },
+    {
+      "filename": "src/content/articles/mbti-personality.ts",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 20
+    },
+    {
+      "filename": "src/content/articles/music-for-aesthetics.ts",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 17
+    },
+    {
+      "filename": "src/content/articles/nekomimi-kemonomimi.ts",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 17
+    },
+    {
+      "filename": "src/content/articles/pixel-art-guide.ts",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 19
+    },
+    {
+      "filename": "src/content/articles/roleplay-and-oc.ts",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 17
+    },
+    {
+      "filename": "src/content/articles/types.ts",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 18
+    },
+    {
+      "filename": "src/content/articles/voice-acting-asmr.ts",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 17
+    },
+    {
+      "filename": "src/content/articles/vtubers-pngtubers.ts",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 19
+    },
+    {
+      "filename": "src/content/articles/vtubing-starter-guide.ts",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 54
+    },
+    {
+      "filename": "src/content/articles/what-are-memes.ts",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 20
+    }
+  ],
+  "savedAt": "2026-11-18T23:34:01.613Z"
+}
