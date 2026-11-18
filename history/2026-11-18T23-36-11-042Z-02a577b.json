@@ -1,0 +1,206 @@
+{
+  "sha": "02a577b4e71f126d81278ee2e22f00315f21f8bf",
+  "message": "File manager: 0 written, 33 removed",
+  "repo": "bundlezone2223/veguto",
+  "files": [
+    {
+      "filename": "content/articles/index.json",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 24
+    },
+    {
+      "filename": "content/articles/miraculous-tales-of-ladybug-cat-noir.json",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 906
+    },
+    {
+      "filename": "content/home.json",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 119
+    },
+    {
+      "filename": "content/media/009d7994f638a2a5aced.webp",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 0
+    },
+    {
+      "filename": "content/media/14c99c44a0b8ef9fd7bf.webp",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 0
+    },
+    {
+      "filename": "content/media/1780c0bfc0ef0e1b7a45.webp",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 0
+    },
+    {
+      "filename": "content/media/209121fa185d210956ef.webp",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 0
+    },
+    {
+      "filename": "content/media/28fb955d4eb83f24751b.webp",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 0
+    },
+    {
+      "filename": "content/media/29d9e49e8e618293a453.webp",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 0
+    },
+    {
+      "filename": "content/media/2ecf27ab00f3670a3b05.webp",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 0
+    },
+    {
+      "filename": "content/media/3bf89654acbc377eb141.webp",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 0
+    },
+    {
+      "filename": "content/media/4a1f1544d9c0e089fec8.webp",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 0
+    },
+    {
+      "filename": "content/media/4f365fac4de64957948e.webp",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 0
+    },
+    {
+      "filename": "content/media/60de71f75b031f070d53.webp",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 0
+    },
+    {
+      "filename": "content/media/6811d79596bec76651b6.webp",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 0
+    },
+    {
+      "filename": "content/media/708595d6f8169c105686.webp",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 0
+    },
+    {
+      "filename": "content/media/7dd2f69365479970042d.webp",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 0
+    },
+    {
+      "filename": "content/media/7e3d42f7097bc4c74099.webp",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 0
+    },
+    {
+      "filename": "content/media/95f626a43407382d9e27.webp",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 0
+    },
+    {
+      "filename": "content/media/9876dfcdef8a292101ac.webp",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 0
+    },
+    {
+      "filename": "content/media/a9e41140628e1a4d7265.webp",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 0
+    },
+    {
+      "filename": "content/media/aa84ae3777771445d207.webp",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 0
+    },
+    {
+      "filename": "content/media/ad9726659ee0f8293c43.webp",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 0
+    },
+    {
+      "filename": "content/media/b74caf3f017c4508321a.webp",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 0
+    },
+    {
+      "filename": "content/media/c359b3a4a262891f071c.webp",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 0
+    },
+    {
+      "filename": "content/media/cb29298f6116878b7fda.webp",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 0
+    },
+    {
+      "filename": "content/media/d092e0cc94725136cde4.webp",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 0
+    },
+    {
+      "filename": "content/media/e64223f1bed9efa5487b.webp",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 0
+    },
+    {
+      "filename": "content/media/edbdb230f90e73a697a4.webp",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 0
+    },
+    {
+      "filename": "content/media/f2561fc87463732c1fd0.webp",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 0
+    },
+    {
+      "filename": "content/media/f60f7d5cd464f6d90b03.webp",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 0
+    },
+    {
+      "filename": "content/media/fabd6ba66c075c9206e0.webp",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 0
+    },
+    {
+      "filename": "content/media/feb91eac6a93f136b8bc.webp",
+      "status": "removed",
+      "additions": 0,
+      "deletions": 0
+    }
+  ],
+  "savedAt": "2026-11-18T23:36:11.042Z"
+}
