@@ -1,0 +1,19 @@
+{
+  "kind": "editor-sync",
+  "version": "1.3.0",
+  "previousVersion": "1.3.0",
+  "previousSha": "5fbe2b0b0a1a0d53a3cbb938d96333673a625c22",
+  "savedAt": "2026-11-19T17:59:31.697Z",
+  "added": [
+    "src/lib/AGENTS.md",
+    "src/lib/repo-edits.test.ts",
+    "src/lib/repo-edits.ts"
+  ],
+  "changed": [
+    "src/components/dashboard/GithubPanel.tsx",
+    "src/lib/github-api.ts"
+  ],
+  "removed": [
+    "tsconfig.tsbuildinfo"
+  ]
+}

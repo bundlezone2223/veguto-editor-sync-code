@@ -129,10 +129,10 @@ function emptyRepo(e: unknown): null {
   throw e;
 }
 
-export type TreeEntry = { path: string; type: "blob" | "tree"; size?: number };
+export type TreeEntry = { path: string; type: "blob" | "tree"; size?: number; sha?: string; mode?: string };
 export async function listTree(repo: string, ref: string): Promise<TreeEntry[]> {
   const t = await gh(SERVER_TOKEN, `/repos/${repo}/git/trees/${encodeURIComponent(ref)}?recursive=1`).catch(emptyRepo);
-  return (t?.tree ?? []).map((e: TreeEntry) => ({ path: e.path, type: e.type, size: e.size }));
+  return (t?.tree ?? []).map((e: TreeEntry) => ({ path: e.path, type: e.type, size: e.size, sha: e.sha, mode: e.mode }));
 }
 
 export type CommitInfo = { sha: string; message: string; date: string; author: string };
@@ -159,4 +159,50 @@ export async function recordHistory(entry: { sha: string; message: string; repo:
   const stamp = new Date().toISOString().replace(/[:.]/g, "-");
   const text = JSON.stringify({ ...entry, savedAt: new Date().toISOString() }, null, 2);
   await commitFiles({ token: SERVER_TOKEN, repo: HISTORY_REPO, branch: "main", message: `History: ${entry.message}`, files: [{ path: `history/${stamp}-${entry.sha.slice(0, 7)}.json`, text }] });
+}
+
+async function headOf(repo: string, branch: string) {
+  const ref = await gh(SERVER_TOKEN, `/repos/${repo}/git/ref/heads/${encodeURIComponent(branch)}`);
+  const parent = ref.object.sha as string;
+  const commit = await gh(SERVER_TOKEN, `/repos/${repo}/git/commits/${parent}`);
+  return { parent, tree: commit.tree.sha as string };
+}
+
+async function moveBranch(repo: string, branch: string, message: string, tree: string, parent: string) {
+  const c = await gh(SERVER_TOKEN, `/repos/${repo}/git/commits`, { method: "POST", body: JSON.stringify({ message, tree, parents: [parent] }) });
+  await gh(SERVER_TOKEN, `/repos/${repo}/git/refs/heads/${encodeURIComponent(branch)}`, { method: "PATCH", body: JSON.stringify({ sha: c.sha }) });
+  return { sha: c.sha as string, url: `https://github.com/${repo}/commit/${c.sha}` };
+}
+
+/**
+ * Applies file-manager edits (deletes, moves, copies) in ONE commit, reusing existing file contents.
+ * Refuses when GitHub changed since the list was loaded, so nobody's update is overwritten.
+ */
+export async function commitTreeEdits(repo: string, branch: string, loadedSha: string, message: string,
+  entries: { path: string; mode: string; type: "blob"; sha: string | null }[]) {
+  if (entries.length === 0) throw new Error("لا توجد تغييرات");
+  const head = await headOf(repo, branch);
+  if (head.parent !== loadedSha) throw new Error("تغيّر المستودع منذ فتح القائمة. أعد التحميل ثم كرر التعديل.");
+  const t = await gh(SERVER_TOKEN, `/repos/${repo}/git/trees`, { method: "POST", body: JSON.stringify({ base_tree: head.tree, tree: entries }) });
+  return moveBranch(repo, branch, message, t.sha, head.parent);
+}
+
+/** Brings back an older version as a NEW commit on top, so the newer versions stay in the history too. */
+export async function restoreVersion(repo: string, branch: string, sha: string, message: string) {
+  const head = await headOf(repo, branch);
+  const old = await gh(SERVER_TOKEN, `/repos/${repo}/git/commits/${sha}`);
+  if (old.tree.sha === head.tree) throw new Error("هذه النسخة مطابقة للنسخة الحالية");
+  return moveBranch(repo, branch, message, old.tree.sha, head.parent);
+}
+
+/** Stores text as a GitHub blob (not yet in any commit) and returns its sha. */
+export async function createTextBlob(repo: string, text: string): Promise<string> {
+  const blob = await gh(SERVER_TOKEN, `/repos/${repo}/git/blobs`, { method: "POST", body: JSON.stringify({ content: text, encoding: "utf-8" }) });
+  return blob.sha as string;
+}
+
+/** Current commit sha of the branch, or null for an empty repo. */
+export async function branchHead(repo: string, branch: string): Promise<string | null> {
+  const ref = await gh(SERVER_TOKEN, `/repos/${repo}/git/ref/heads/${encodeURIComponent(branch)}`).catch(emptyRepo);
+  return ref?.object?.sha ?? null;
 }

@@ -1,0 +1,1 @@
+- Dashboard file edits (delete/move/copy/rename and text edits) stay local (`src/lib/repo-edits.ts`; edited text sits under a temporary `local:` sha) until Confirm, which uploads the texts as blobs and writes everything in one commit; restore = new commit on top.
