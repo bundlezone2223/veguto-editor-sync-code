@@ -1,0 +1,12 @@
+{
+  "kind": "editor-sync",
+  "version": "1.3.0",
+  "previousVersion": "1.3.0",
+  "previousSha": "e335790ff3ef72aec91c0102fb48fc056a299b59",
+  "savedAt": "2026-11-19T18:04:29.200Z",
+  "added": [
+    "tsconfig.tsbuildinfo"
+  ],
+  "changed": [],
+  "removed": []
+}
