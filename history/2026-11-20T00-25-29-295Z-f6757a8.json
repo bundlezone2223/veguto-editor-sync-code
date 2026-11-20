@@ -1,0 +1,14 @@
+{
+  "sha": "f6757a8277fa1d6e1e1f17163ca1d1f86470485d",
+  "message": "Restore version 41033bb: Create types.ts",
+  "repo": "bundlezone2223/veguto",
+  "files": [
+    {
+      "filename": "src/content/articles/Miraculous-Tales-of-Ladybug-&-Cat-Noir.ts",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 1
+    }
+  ],
+  "savedAt": "2026-11-20T00:25:29.295Z"
+}
