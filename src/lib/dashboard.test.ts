@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { zipSync, strToU8 } from "fflate";
 import { DEFAULT_SITE_CONFIG, moveItem, normalizeSiteConfig } from "@/lib/site-config";
-import { buildArticleFiles, mergeIndex, publishState } from "@/lib/publish-article";
+import { buildRows, emptyIndex, readSiteCategories, rowsToAutoSave, type LibraryEntry, type LibraryIndex } from "@/lib/article-library";
 import { readZip } from "@/lib/zip-upload";
 import type { Project } from "@/lib/projects-store";
 
@@ -29,28 +29,47 @@ describe("home layout settings", () => {
   });
 });
 
-describe("publishing articles", () => {
-  it("stores each embedded picture once as its own file and links to it", async () => {
-    const { article, files } = await buildArticleFiles(project(), 100);
-    const media = files.filter((f) => f.path.startsWith("content/media/"));
-    expect(media).toHaveLength(1);
-    expect(media[0]!.base64).toBe("QUJD");
-    expect(article.thumbnail).toBe(media[0]!.path.replace("content/", ""));
-    expect(article.sections[1]).toMatchObject({ src: article.thumbnail });
-    expect(article.sections[2]).toMatchObject({ src: "https://x/y.png" });
-    expect(files[0]!.path).toBe("content/articles/miraculous.json");
+const lib = (over: Partial<{ index: LibraryIndex; siteFiles: string[]; editorFiles: string[] }> = {}) => ({
+  index: over.index ?? emptyIndex(),
+  siteFiles: new Set(over.siteFiles ?? []),
+  editorFiles: new Set(over.editorFiles ?? []),
+});
+const entry = (status: LibraryEntry["status"], updatedAt = 10, file = "Miraculous.ts"): LibraryIndex => ({
+  version: 1, articles: { abcdefghijk: { articleId: "abcdefghijk", file, title: "Miraculous", status, updatedAt, savedAt: 1 } },
+});
+const withId = (over: Partial<Project> = {}) => project({ meta: { ...project().meta, articleId: "abcdefghijk" }, ...over });
+
+describe("articles tab", () => {
+  it("shows every article in the main site's articles folder as published", () => {
+    const rows = buildRows([], lib({ siteFiles: ["Miraculous-Tales-of-Ladybug-&-Cat-Noir.ts"] }));
+    expect(rows).toHaveLength(1);
+    expect(rows[0]).toMatchObject({ status: "published", title: "Miraculous Tales of Ladybug & Cat Noir", onGithub: true });
   });
-  it("replaces an article already in the index instead of listing it twice", async () => {
-    const { article } = await buildArticleFiles(project(), 200);
-    const idx = mergeIndex({ version: 1, updatedAt: 0, articles: [{ ...article, title: "old", publishedAt: 1 }] }, [article]);
-    expect(idx.articles).toHaveLength(1);
-    expect(idx.articles[0]!.title).toBe("Miraculous");
-    expect("sections" in idx.articles[0]!).toBe(false);
+  it("links a local article to the site file with the same title", () => {
+    const rows = buildRows([project({ title: "Miraculous: Tales of Ladybug & Cat Noir", meta: { ...project().meta, title: "Miraculous: Tales of Ladybug & Cat Noir" } })], lib({ siteFiles: ["Miraculous-Tales-of-Ladybug-&-Cat-Noir.ts"] }));
+    expect(rows).toHaveLength(1);
+    expect(rows[0]).toMatchObject({ status: "published", project: expect.anything() });
   });
-  it("marks an article as changed when edited after publishing", () => {
-    expect(publishState(project(), undefined)).toBe("draft");
-    expect(publishState(project({ updatedAt: 10 }), { slug: "m", publishedAt: 5, articleUpdatedAt: 10 })).toBe("published");
-    expect(publishState(project({ updatedAt: 11 }), { slug: "m", publishedAt: 5, articleUpdatedAt: 10 })).toBe("changed");
+  it("saves a new or edited draft to GitHub, but never a published one", () => {
+    expect(rowsToAutoSave(buildRows([withId()], lib()))).toHaveLength(1);
+    expect(rowsToAutoSave(buildRows([withId({ updatedAt: 10 })], lib({ index: entry("draft"), editorFiles: ["Miraculous.ts"] })))).toHaveLength(0);
+    expect(rowsToAutoSave(buildRows([withId({ updatedAt: 11 })], lib({ index: entry("private"), editorFiles: ["Miraculous.ts"] })))).toHaveLength(1);
+    const pub = buildRows([withId({ updatedAt: 11 })], lib({ index: entry("published"), siteFiles: ["Miraculous.ts"] }));
+    expect(pub[0]).toMatchObject({ status: "published", changed: true });
+    expect(rowsToAutoSave(pub)).toHaveLength(0);
+  });
+  it("keeps a private article private and off the site list", () => {
+    const rows = buildRows([], lib({ index: entry("private"), editorFiles: ["Miraculous.ts"] }));
+    expect(rows).toEqual([expect.objectContaining({ status: "private", onGithub: true })]);
+  });
+  it("treats an article removed from the site by hand as a draft", () => {
+    expect(buildRows([withId()], lib({ index: entry("published") }))[0]!.status).toBe("draft");
+  });
+  it("skips empty untitled articles", () => {
+    expect(buildRows([project({ title: "", meta: { ...project().meta, title: "" }, sections: [] })], lib())).toHaveLength(0);
+  });
+  it("reads the categories the main site accepts", () => {
+    expect(readSiteCategories('export const CATEGORIES = [\n  "anime-manga",\n  "gaming",\n] as const;')).toEqual(["anime-manga", "gaming"]);
   });
 });
 

@@ -64,8 +64,9 @@ export async function sendNudge(info: { status: UpdateStatus; local: string; rem
 
 export { APP_VERSION };
 
-/** Folder on GitHub that only GitHub keeps (update records); never compared or removed. */
-export const REMOTE_ONLY_PREFIX = "history/";
+/** Folders that only GitHub keeps (update records, saved drafts); never compared or removed. */
+export const REMOTE_ONLY_PREFIXES = ["history/", "editor-articles/"];
+export const isRemoteOnly = (p: string) => REMOTE_ONLY_PREFIXES.some((r) => p.startsWith(r));
 
 /**
  * Server / run-time files of this hosting copy. The GitHub copy carries only the site itself,
@@ -86,7 +87,7 @@ export function isRuntimeFile(p: string) {
 
 export type FileDiff = { added: string[]; changed: string[]; removed: string[] };
 
-/** Compares two "path → git blob sha" lists. Files under history/ on GitHub are ignored. */
+/** Compares two "path → git blob sha" lists. Files under history/ and editor-articles/ on GitHub are ignored. */
 export function diffFiles(local: Record<string, string>, remote: Record<string, string>): FileDiff {
   const added: string[] = [], changed: string[] = [], removed: string[] = [];
   for (const [p, sha] of Object.entries(local)) {
@@ -94,7 +95,7 @@ export function diffFiles(local: Record<string, string>, remote: Record<string, 
     if (!(p in remote)) added.push(p);
     else if (remote[p] !== sha) changed.push(p);
   }
-  for (const p of Object.keys(remote)) if (!(p in local) && !p.startsWith(REMOTE_ONLY_PREFIX) && !isRuntimeFile(p)) removed.push(p);
+  for (const p of Object.keys(remote)) if (!(p in local) && !isRemoteOnly(p) && !isRuntimeFile(p)) removed.push(p);
   return { added: added.sort(), changed: changed.sort(), removed: removed.sort() };
 }
 

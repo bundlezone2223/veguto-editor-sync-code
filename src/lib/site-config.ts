@@ -1,3 +1,6 @@
+/** Folder in the main site repo that receives the home layout file. */
+export const CONTENT_DIR = "content";
+
 /**
  * How the main Veguto Wiki home page looks. Edited in the Dashboard, saved in this
  * browser, and published to GitHub as `content/home.json` for the main site to read.

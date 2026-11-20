@@ -14,8 +14,9 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 REPO = "bundlezone2223/veguto-editor-sync-code"
 API = f"https://api.github.com/repos/{REPO}"
 SKIP = (".git/", "node_modules/", ".jj/")
-# Dashboard update records live only on GitHub; push keeps them and pull leaves them there.
-KEEP_REMOTE = ("history/",)
+# Dashboard update records and saved draft articles live only on GitHub; push keeps them and pull leaves them there
+# (keep in sync with REMOTE_ONLY_PREFIXES in src/lib/app-update.ts).
+KEEP_REMOTE = ("history/", "editor-articles/")
 # Server / run-time files of this hosting copy: never compared, sent, removed or pulled
 # (keep in sync with RUNTIME_FILES in src/lib/app-update.ts).
 RUNTIME = (".lovable/", ".npmrc", ".prettierignore", ".prettierrc", ".gitignore", "AGENTS.md", "README.md",

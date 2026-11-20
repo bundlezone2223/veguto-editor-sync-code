@@ -6,6 +6,8 @@ import { UpdateCheck } from "@/components/UpdateCheck";
 import { ProjectMetaModal, type ProjectMetaValues } from "@/components/ProjectMetaModal";
 import { deleteProject, loadProjects, newId, upsertProject, type Project } from "@/lib/projects-store";
 import { installSampleArticles } from "@/lib/sample-article";
+import { forgetDraft } from "@/lib/article-library";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -61,8 +63,10 @@ function HomePage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("حذف هذا المشروع؟")) return;
+    if (!confirm("حذف هذا المشروع؟ تُحذف أيضاً نسخته المحفوظة كمسودة على GitHub (المقالات المنشورة تبقى على الموقع).")) return;
+    const p = projects.find((x) => x.id === id);
     await deleteProject(id);
+    if (p) void forgetDraft(p).catch(() => toast.error("حُذف المقال من المتصفح، لكن تعذر حذف نسخته من GitHub"));
     setProjects(await loadProjects());
   };
 

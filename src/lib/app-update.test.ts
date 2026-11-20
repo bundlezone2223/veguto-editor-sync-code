@@ -39,6 +39,9 @@ describe("file comparison for the update button", () => {
   it("never removes the update records kept on GitHub", () => {
     expect(diffFiles({}, { "history/x.json": "1" }).removed).toEqual([]);
   });
+  it("never removes the draft articles saved on GitHub", () => {
+    expect(diffFiles({}, { "editor-articles/Miraculous.ts": "1", "editor-articles/index.json": "2" }).removed).toEqual([]);
+  });
   it("hashes files the same way GitHub does", () => {
     expect(gitBlobSha(new TextEncoder().encode("hello\n"))).toBe("ce013625030ba8dba906f756967f9e9ca394464a");
   });

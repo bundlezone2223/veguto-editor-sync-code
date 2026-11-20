@@ -1,17 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { FileJson, Github, LayoutTemplate, Loader2, Newspaper, RotateCcw, Send } from "lucide-react";
 import { toast } from "sonner";
 import { WikiLayout } from "@/components/WikiLayout";
 import { HomeLayoutEditor } from "@/components/dashboard/HomeLayoutEditor";
 import { HomePreview } from "@/components/dashboard/HomePreview";
-import { PublishPanel } from "@/components/dashboard/PublishPanel";
+import { ArticlesPanel } from "@/components/dashboard/ArticlesPanel";
 import { GithubPanel } from "@/components/dashboard/GithubPanel";
 import { GhostButton, PrimaryButton } from "@/components/dashboard/ui";
 import { loadProjects, type Project } from "@/lib/projects-store";
-import { DEFAULT_SITE_CONFIG, loadSiteConfig, saveSiteConfig, type SiteConfig } from "@/lib/site-config";
+import { CONTENT_DIR, DEFAULT_SITE_CONFIG, loadSiteConfig, saveSiteConfig, type SiteConfig } from "@/lib/site-config";
 import { DEFAULT_GITHUB_SETTINGS, commitFiles, loadGithubSettings, type GithubSettings } from "@/lib/github-api";
-import { CONTENT_DIR } from "@/lib/publish-article";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
@@ -30,7 +29,7 @@ export const Route = createFileRoute("/dashboard")({
 type Tab = "home" | "articles" | "github";
 const TABS: { id: Tab; label: string; Icon: typeof Github }[] = [
   { id: "home", label: "الصفحة الرئيسية", Icon: LayoutTemplate },
-  { id: "articles", label: "نشر المقالات", Icon: Newspaper },
+  { id: "articles", label: "المقالات", Icon: Newspaper },
   { id: "github", label: "GitHub", Icon: Github },
 ];
 
@@ -41,11 +40,13 @@ function DashboardPage() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [publishing, setPublishing] = useState(false);
 
+  const reloadProjects = useCallback(async () => { setProjects(await loadProjects()); }, []);
+
   useEffect(() => {
     setConfig(loadSiteConfig());
     setSettings(loadGithubSettings());
-    void loadProjects().then(setProjects);
-  }, []);
+    void reloadProjects();
+  }, [reloadProjects]);
 
   const categories = useMemo(() => [...new Set([...projects.flatMap((p) => p.categories), ...config.sections.map((s) => s.label)])].filter(Boolean), [projects, config.sections]);
 
@@ -114,7 +115,7 @@ function DashboardPage() {
           </div>
         </>
       )}
-      {tab === "articles" && <PublishPanel projects={projects} onNeedSettings={() => { toast.error("أضف رمز GitHub ومستودع الموقع الرئيسي أولا"); setTab("github"); }} />}
+      {tab === "articles" && <ArticlesPanel projects={projects} onProjectsChanged={reloadProjects} />}
       {tab === "github" && <GithubPanel settings={settings} onChange={setSettings} />}
     </WikiLayout>
   );

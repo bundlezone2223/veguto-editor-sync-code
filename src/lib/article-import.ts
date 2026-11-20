@@ -22,11 +22,11 @@ const articleSchema = z.object({
 }).refine((article) => article.content !== undefined || article.sections !== undefined, "المقال يحتاج content أو sections");
 
 /** Read static TS literals only; never execute pasted code or interpolate templates. */
-export async function parseArticleTs(source: string): Promise<{
+export async function parseArticleTs(source: string, opts: { maxLength?: number } = {}): Promise<{
   title: string; excerpt: string; hero: string; categories: string[]; tags: string[];
   articleId?: string; sections: Section[];
 }> {
-  if (source.length > 2_000_000) throw new Error("الكود كبير جدًا؛ الحد الأقصى مليونا حرف.");
+  if (source.length > (opts.maxLength ?? 2_000_000)) throw new Error("الكود كبير جدًا؛ الحد الأقصى مليونا حرف.");
   const ts = await import("typescript");
   const code = source.trim().replace(/^```(?:typescript|ts|json)?\s*\n/i, "").replace(/\n```\s*$/, "");
   let value: unknown;

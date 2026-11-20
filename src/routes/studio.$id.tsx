@@ -2,7 +2,7 @@ import { detectArticleDir } from "@/lib/article-direction";
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { needsClearBefore, planImageLayouts, type ImageLayout } from "@/lib/image-layout";
-import { ArrowLeft, Heading2, Heading3, Pilcrow, List, Quote, Image as ImageIcon, Lightbulb, Images, ImagePlus, Copy, Download, PenLine, Bot, MoreHorizontal, Code2, Info, ClipboardPaste, Bold, Terminal, Undo2 } from "lucide-react";
+import { ArrowLeft, Heading2, Heading3, Pilcrow, List, Quote, Image as ImageIcon, Lightbulb, Images, ImagePlus, Copy, Download, PenLine, Bot, MoreHorizontal, Code2, Info, ClipboardPaste, Bold, Terminal, Undo2, Cloud, CloudOff, Loader2 } from "lucide-react";
 import { ArticleImportDialog } from "@/components/ArticleImportDialog";
 import { TextImportDialog } from "@/components/TextImportDialog";
 import { JsonImagesDialog } from "@/components/JsonImagesDialog";
@@ -16,6 +16,8 @@ import type { Section } from "@/lib/article-content";
 import { getProject, upsertProject, newArticleId, type Meta, type Project } from "@/lib/projects-store";
 import { pullPreview, pushPreview } from "@/lib/preview-sync";
 import { articleFileName } from "@/lib/article-file-name";
+import { buildArticleTs } from "@/lib/article-ts";
+import { autoSaveArticle } from "@/lib/article-library";
 import { editableText, inlineBoldHtml } from "@/lib/inline-bold";
 import { Button } from "@/components/ui/button";
 
@@ -45,46 +47,6 @@ const emptySection = (type: Section["type"]): Section => {
     case "callout": return { type: "callout", title: "", text: "" };
   }
 };
-
-const esc = (s: string) => s.replace(/\\/g, "\\\\").replace(/`/g, "\\`").replace(/\$/g, "\\$");
-const jsonStr = (s: string) => JSON.stringify(s ?? "");
-
-function serializeSection(s: Section): string {
-  switch (s.type) {
-    case "h2":
-    case "h3":
-    case "p":
-    case "emphasis":
-      return `    { type: "${s.type}", text: \`${esc(s.text)}\` }`;
-    case "list":
-      return `    { type: "list", ordered: ${s.ordered ? "true" : "false"}, items: [${s.items.map(i => `\`${esc(i)}\``).join(", ")}] }`;
-    case "quote":
-      return `    { type: "quote", text: \`${esc(s.text)}\`${s.cite ? `, cite: \`${esc(s.cite)}\`` : ""} }`;
-    case "image":
-      return `    { type: "image", src: ${jsonStr(s.src)}, alt: ${jsonStr(s.alt)}${s.caption ? `, caption: ${jsonStr(s.caption)}` : ""} }`;
-    case "callout":
-      return `    { type: "callout", title: \`${esc(s.title)}\`, text: \`${esc(s.text)}\` }`;
-  }
-}
-
-function buildTs(meta: Meta, sections: Section[]): string {
-  const bt = (s: string) => `\`${esc(s ?? "")}\``;
-  return `import type { Section } from "./types";
-
-export const article = {
-  id: ${bt(meta.articleId ?? "")},
-  title: ${bt(meta.title)},${meta.excerpt?.trim() ? `\n  description: ${bt(meta.excerpt.trim())},` : ""}
-  thumbnail: ${jsonStr(meta.hero)},
-  category: ${bt((meta.categories ?? [])[0] ?? "")},
-  tags: [${(meta.tags ?? []).map(bt).join(", ")}],
-  content: [
-${sections.map(serializeSection).join(",\n")}
-  ] as Section[],
-};
-
-export default article;
-`;
-}
 
 const headingPattern = /^\s*[•·●⦁]{1,3}\s*(.+?)\s*[•·●⦁]{1,3}\s*$/;
 
@@ -353,6 +315,28 @@ function StudioPage() {
     return () => clearTimeout(t);
   }, [project]);
 
+  // Drafts are saved to the editor's GitHub copy a few seconds after the last edit (and when leaving the editor).
+  const [cloud, setCloud] = useState<"idle" | "saving" | "saved" | "published" | "error">("idle");
+  const latest = useRef<Project | null>(null);
+  const savedAt = useRef(0);
+  const saveToCloud = useCallback(async (p: Project, quiet = false) => {
+    if (mirrored.current || p.updatedAt <= savedAt.current) return;
+    if (!quiet) setCloud("saving");
+    try {
+      const r = await autoSaveArticle(p);
+      savedAt.current = Math.max(savedAt.current, p.updatedAt);
+      if (!quiet) setCloud(r === "published" ? "published" : "saved");
+    } catch { if (!quiet) setCloud("error"); }
+  }, []);
+  useEffect(() => {
+    latest.current = project;
+    if (!project || mirrored.current) return;
+    if (savedAt.current === 0) { savedAt.current = project.updatedAt; return; }
+    const t = setTimeout(() => void saveToCloud(project), 12000);
+    return () => clearTimeout(t);
+  }, [project, saveToCloud]);
+  useEffect(() => () => { if (latest.current) void saveToCloud(latest.current, true); }, [saveToCloud]);
+
   const update = (i: number, patch: Partial<Section>) =>
     setSections((arr) => {
       const current = arr[i];
@@ -421,7 +405,7 @@ function StudioPage() {
     });
   }, [sections.length]);
 
-  const tsCode = useMemo(() => meta ? buildTs(meta, sections) : "", [meta, sections]);
+  const tsCode = useMemo(() => meta ? buildArticleTs(meta, sections) : "", [meta, sections]);
 
   const download = () => {
     if (!meta) return;
@@ -484,6 +468,11 @@ function StudioPage() {
             <ArrowLeft size={18} />
           </Link>
           <span dir="auto" className="truncate text-xs text-muted-foreground hidden sm:block">{meta.title}</span>
+          {cloud !== "idle" && (
+            <span role="status" title={{ saving: "جارٍ الحفظ على GitHub…", saved: "محفوظ على GitHub", published: "مقال منشور: حدّثه على الموقع من لوحة التحكم", error: "تعذر الحفظ على GitHub", idle: "" }[cloud]} className={`shrink-0 ${cloud === "error" ? "text-destructive" : "text-muted-foreground"}`}>
+              {cloud === "saving" ? <Loader2 size={14} className="animate-spin" /> : cloud === "error" ? <CloudOff size={14} /> : <Cloud size={14} />}
+            </span>
+          )}
         </div>
         <div className="flex items-center gap-1.5">
           <div className="flex gap-0.5 rounded-full bg-muted p-0.5">

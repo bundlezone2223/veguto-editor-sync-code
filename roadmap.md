@@ -20,3 +20,4 @@
 - [x] Dashboard: publish articles to the main site with draft/published/changed labels; upload a full project ZIP to the code repo. Verified on temporary GitHub branches.
 - [ ] Main Veguto Wiki site reads `content/home.json` and `content/articles/*` — waiting on the main site's project/repo from the user.
 - [x] Make "check for update" compare the real files with GitHub: same files → match message, different files → send them to GitHub (old copy kept in history), newer GitHub version → copyable prompt.
+- [x] Articles tab: list site articles (src/content/articles) as published, auto-save drafts to the editor GitHub copy, private/lock, edit (open GitHub articles in the editor), publish/update and delete. Verified with a test article (publishing to the live site not tried).

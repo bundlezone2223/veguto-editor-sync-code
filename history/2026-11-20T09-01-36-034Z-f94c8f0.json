@@ -1,0 +1,30 @@
+{
+  "kind": "editor-sync",
+  "version": "1.3.0",
+  "previousVersion": "1.3.0",
+  "previousSha": "f94c8f095fc3fc90ca025dcc9d507eacac6e0357",
+  "savedAt": "2026-11-20T09:01:36.034Z",
+  "added": [
+    "src/components/dashboard/ArticlesPanel.tsx",
+    "src/lib/article-library.ts",
+    "src/lib/article-ts.ts"
+  ],
+  "changed": [
+    "roadmap.md",
+    "scripts/github-sync.py",
+    "src/lib/AGENTS.md",
+    "src/lib/app-update.test.ts",
+    "src/lib/app-update.ts",
+    "src/lib/article-import.ts",
+    "src/lib/dashboard.test.ts",
+    "src/lib/site-config.ts",
+    "src/routes/dashboard.tsx",
+    "src/routes/index.tsx",
+    "src/routes/studio.$id.tsx",
+    "src/styles.css"
+  ],
+  "removed": [
+    "src/components/dashboard/PublishPanel.tsx",
+    "src/lib/publish-article.ts"
+  ]
+}
