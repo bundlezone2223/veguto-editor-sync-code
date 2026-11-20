@@ -1,0 +1,18 @@
+{
+  "kind": "editor-sync",
+  "version": "1.4.2",
+  "previousVersion": "1.4.1",
+  "previousSha": "f4ed2f3291f98e7870cb4b3ee61c02c9a88b7136",
+  "savedAt": "2026-11-20T12:35:28.321Z",
+  "added": [
+    "src/components/UpdateCheck.test.tsx",
+    "tsconfig.tsbuildinfo"
+  ],
+  "changed": [
+    "roadmap.md",
+    "src/components/UpdateCheck.tsx",
+    "src/styles.css",
+    "src/version.ts"
+  ],
+  "removed": []
+}

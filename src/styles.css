@@ -134,3 +134,23 @@
   .update-btn-primary:disabled, .update-btn-ghost:disabled { opacity: 0.5; cursor: not-allowed; }
   @keyframes version-pop { from { transform: scale(0.8); opacity: 0.4; } to { transform: scale(1); opacity: 1; } }
 }
+
+/* Check-update button while files differ: the dark text turns softer and a red dot sits on the bell. */
+@layer components {
+  .check-btn-diff { color: var(--muted-foreground); }
+  .check-dot-wrap { position: relative; display: inline-flex; }
+  .check-dot {
+    position: absolute; inset-block-start: -3px; inset-inline-start: -3px;
+    width: 8px; height: 8px; border-radius: 9999px; background: var(--destructive);
+    box-shadow: 0 0 0 0 color-mix(in oklch, var(--destructive) 55%, transparent);
+    animation: check-dot-pulse 1.8s ease-out infinite;
+  }
+  @keyframes check-dot-pulse {
+    0% { box-shadow: 0 0 0 0 color-mix(in oklch, var(--destructive) 55%, transparent); }
+    70%, 100% { box-shadow: 0 0 0 7px transparent; }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .check-dot { animation: none; box-shadow: none; }
+}

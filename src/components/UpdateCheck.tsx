@@ -98,7 +98,10 @@ export function UpdateCheck() {
   };
 
   const showPrompt = result && (result.kind === "pull-prompt" || (result.kind === "version-only" && result.status !== "same"));
-  const canUpdate = result && (result.kind === "same" || result.kind === "same-version");
+  /** The update window opens only when the files really differ (same version, different files). */
+  const canUpdate = result?.kind === "same-version";
+  /** Files that are not the same on both sides. A finished push is excluded: those files are identical now. */
+  const filesDiffer = !!result && result.kind !== "pushed" && !!result.diff && diffCount(result.diff) > 0;
   const files = result?.diff ? [
     ...result.diff.added.map((f) => ["+", f] as const),
     ...result.diff.changed.map((f) => ["~", f] as const),
@@ -116,9 +119,15 @@ export function UpdateCheck() {
           type="button"
           onClick={check}
           disabled={busy}
-          className="inline-flex items-center gap-2 rounded-md border border-border bg-card px-3 py-1.5 text-sm font-medium hover:bg-muted disabled:opacity-60"
+          className={[
+            "inline-flex items-center gap-2 rounded-md border bg-card px-3 py-1.5 text-sm font-medium hover:bg-muted disabled:opacity-60",
+            filesDiffer ? "check-btn-diff border-accent-pink/45" : "border-border",
+          ].join(" ")}
         >
-          {busy ? <Loader2 size={16} className="animate-spin" /> : <BellRing size={16} />}
+          <span className="check-dot-wrap">
+            {busy ? <Loader2 size={16} className="animate-spin" /> : <BellRing size={16} />}
+            {filesDiffer && <span className="check-dot" aria-hidden />}
+          </span>
           {busy ? "جارٍ مقارنة الملفات…" : "فحص التحديث"}
         </button>
       </div>
