@@ -31,29 +31,50 @@ const DIFFERENT_FILES: SyncOk = {
   diff: { added: [], changed: ["src/components/UpdateCheck.tsx"], removed: [] }, pushed: null,
 };
 
-/** Runs the check and waits for its result box. */
-async function runCheck() {
-  fireEvent.click(screen.getByRole("button", { name: "فحص التحديث" }));
-  await waitFor(() => expect(screen.getByRole("status")).toBeInTheDocument());
+/** Waits for the automatic, read-only check that runs when the page opens. */
+async function finishAutomaticCheck() {
+  await waitFor(() => expect(screen.getByRole("button", { name: "عرض النتيجة" })).toBeInTheDocument());
+  expect(sync).toHaveBeenCalledWith({ data: { push: false } });
 }
 
-afterEach(cleanup);
+/** Opens the message produced by the automatic check. */
+function showResult() {
+  fireEvent.click(screen.getByRole("button", { name: "عرض النتيجة" }));
+}
+
+afterEach(() => {
+  cleanup();
+  vi.clearAllMocks();
+});
 
 describe("update check button and update window", () => {
-  it("hides the update button and the red dot when the files are identical", async () => {
+  it("checks on page entry and hides the update button and red dot when files are identical", async () => {
     sync.mockResolvedValue(SAME_FILES);
     render(<UpdateCheck />);
-    await runCheck();
+    await finishAutomaticCheck();
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
+    expect(document.querySelector(".check-dot")).toBeNull();
+    showResult();
     expect(screen.getByText(/نسختك مطابقة لـ GitHub/)).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "تحديث" })).not.toBeInTheDocument();
-    expect(document.querySelector(".check-dot")).toBeNull();
   });
 
-  it("shows the update button and a red dot when files differ", async () => {
+  it("shows a red dot after automatic checking, then reveals the update button on demand", async () => {
     sync.mockResolvedValue(DIFFERENT_FILES);
     render(<UpdateCheck />);
-    await runCheck();
-    expect(screen.getByRole("button", { name: "تحديث" })).toBeInTheDocument();
+    await finishAutomaticCheck();
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
     expect(document.querySelector(".check-dot")).not.toBeNull();
+    expect(screen.queryByRole("button", { name: "تحديث" })).not.toBeInTheDocument();
+    showResult();
+    expect(screen.getByRole("button", { name: "تحديث" })).toBeInTheDocument();
+  });
+
+  it("never pushes files during the automatic page-entry check", async () => {
+    sync.mockResolvedValue({ ...DIFFERENT_FILES, status: "github-older", local: "1.4.2", remote: "1.4.1" });
+    render(<UpdateCheck />);
+    await finishAutomaticCheck();
+    expect(sync).toHaveBeenCalledTimes(1);
+    expect(sync).toHaveBeenCalledWith({ data: { push: false } });
   });
 });

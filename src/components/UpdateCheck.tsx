@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { BellRing, Check, Copy, ExternalLink, Loader2, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -36,7 +36,9 @@ function message(r: Result) {
 export function UpdateCheck() {
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<Result | null>(null);
+  const [revealed, setRevealed] = useState(false);
   const [copied, setCopied] = useState(false);
+  const autoStarted = useRef(false);
 
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -47,13 +49,13 @@ export function UpdateCheck() {
     text: requestText(res.status, res.local, res.remote),
   });
 
-  const check = async () => {
+  const check = useCallback(async (manual: boolean) => {
     setBusy(true);
     setCopied(false);
     try {
-      // Compare first; only a newer site (or an empty GitHub copy) is sent straight away.
+      // Opening the page only compares files; it never sends anything to GitHub.
       let res = await syncEditorCode({ data: { push: false } });
-      if (res.available && res.action === "push" && res.status !== "same") res = await syncEditorCode({ data: { push: true } });
+      if (manual && res.available && res.action === "push" && res.status !== "same") res = await syncEditorCode({ data: { push: true } });
       let r: Result;
       if (res.available) {
         r = fromSync(res);
@@ -63,13 +65,20 @@ export function UpdateCheck() {
         r = { kind: "version-only", status, local: APP_VERSION, remote, text: requestText(status, APP_VERSION, remote) };
       }
       setResult(r);
+      setRevealed(manual);
       await sendNudge({ status: r.status, local: r.local, remote: r.remote });
     } catch (e) {
       toast.error(`تعذر الفحص أو الرفع إلى GitHub: ${e instanceof Error ? e.message : String(e)}`);
     } finally {
       setBusy(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    if (autoStarted.current) return;
+    autoStarted.current = true;
+    void check(false);
+  }, [check]);
 
   /** Sends the site to GitHub under the picked version; true when it worked. */
   const pushVersion = async (version: string) => {
@@ -117,7 +126,14 @@ export function UpdateCheck() {
         </span>
         <button
           type="button"
-          onClick={check}
+          onClick={() => {
+            if (result && !revealed) {
+              setRevealed(true);
+              setCopied(false);
+            } else {
+              void check(true);
+            }
+          }}
           disabled={busy}
           className={[
             "inline-flex items-center gap-2 rounded-md border bg-card px-3 py-1.5 text-sm font-medium hover:bg-muted disabled:opacity-60",
@@ -128,10 +144,10 @@ export function UpdateCheck() {
             {busy ? <Loader2 size={16} className="animate-spin" /> : <BellRing size={16} />}
             {filesDiffer && <span className="check-dot" aria-hidden />}
           </span>
-          {busy ? "جارٍ مقارنة الملفات…" : "فحص التحديث"}
+          {busy ? "جارٍ مقارنة الملفات…" : result && !revealed ? "عرض النتيجة" : "فحص التحديث"}
         </button>
       </div>
-      {result && (
+      {result && revealed && (
         <div role="status" className="mt-3 rounded-xl border border-border bg-card p-3 text-sm shadow-[var(--card-shadow)]">
           <p className="font-medium">{message(result)}</p>
           <p className="mt-1 text-xs text-muted-foreground">
