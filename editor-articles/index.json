@@ -1,13 +1,4 @@
 {
   "version": 1,
-  "articles": {
-    "TestDraft01": {
-      "articleId": "TestDraft01",
-      "file": "Veguto-Test-Draft.ts",
-      "title": "Veguto Test Draft",
-      "status": "draft",
-      "updatedAt": 1795133349383,
-      "savedAt": 1795133369682
-    }
-  }
+  "articles": {}
 }
