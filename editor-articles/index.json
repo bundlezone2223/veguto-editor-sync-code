@@ -1,14 +1,6 @@
 {
   "version": 1,
   "articles": {
-    "TestDraft01": {
-      "articleId": "TestDraft01",
-      "file": "Veguto-Test-Draft.ts",
-      "title": "Veguto Test Draft",
-      "status": "draft",
-      "updatedAt": 1795133880749,
-      "savedAt": 1795133894117
-    },
     "WHQT0pon4ct": {
       "articleId": "WHQT0pon4ct",
       "file": "Miraculous-Tales-of-Ladybug-&-Cat-Noir.ts",
