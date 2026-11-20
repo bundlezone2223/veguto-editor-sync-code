@@ -1,4 +1,4 @@
-import { isRuntimeFile, compareVersions, decideSync, diffCount, diffFiles, newVersionError, nextPatchVersion, readVersion, setVersionText, updateStatus } from "@/lib/app-update";
+import { codeDiff, latestVersion, isRuntimeFile, compareVersions, decideSync, diffCount, diffFiles, newVersionError, nextPatchVersion, readVersion, setVersionText, updateStatus } from "@/lib/app-update";
 import { gitBlobSha } from "@/lib/source-sync.server";
 
 describe("version comparison", () => {
@@ -35,6 +35,16 @@ describe("file comparison for the update button", () => {
   });
   it("an older site version gives a prompt instead of overwriting GitHub", () => {
     expect(decideSync("site-older", 5)).toBe("pull-prompt");
+  });
+  it("a higher GitHub number with identical code is not an update", () => {
+    const d = codeDiff(diffFiles({ "a.ts": "1", "src/version.ts": "old" }, { "a.ts": "1", "src/version.ts": "new" }));
+    expect(diffCount(d)).toBe(0);
+    expect(decideSync("site-older", diffCount(d))).toBe("same");
+  });
+  it("shows GitHub's number when it is higher", () => {
+    expect(latestVersion("1.4.3", "1.4.4")).toBe("1.4.4");
+    expect(latestVersion("1.4.5", "1.4.4")).toBe("1.4.5");
+    expect(latestVersion("1.4.3", null)).toBe("1.4.3");
   });
   it("never removes the update records kept on GitHub", () => {
     expect(diffFiles({}, { "history/x.json": "1" }).removed).toEqual([]);

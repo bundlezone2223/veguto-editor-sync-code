@@ -3,7 +3,7 @@ import { ArrowRight, Check, Copy, Download, Loader2, Upload } from "lucide-react
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { VersionPicker } from "@/components/VersionPicker";
-import { newVersionError, nextPatchVersion, pullRequestText } from "@/lib/app-update";
+import { latestVersion, newVersionError, nextPatchVersion, pullRequestText } from "@/lib/app-update";
 
 type Step = "choose" | "push" | "pull";
 
@@ -16,20 +16,22 @@ export function UpdateDialog({ open, onOpenChange, local, remote, filesDifferent
   filesDifferent: number;
   onPush: (version: string) => Promise<boolean>;
 }) {
+  /** The counter starts from the newest number on either side and never goes below it. */
+  const base = latestVersion(local, remote);
   const [step, setStep] = useState<Step>("choose");
-  const [digits, setDigits] = useState<number[]>(() => nextPatchVersion(local).split(".").map(Number));
+  const [digits, setDigits] = useState<number[]>(() => nextPatchVersion(base).split(".").map(Number));
   const [busy, setBusy] = useState(false);
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     if (!open) return;
     setStep("choose");
-    setDigits(nextPatchVersion(local).split(".").map(Number));
+    setDigits(nextPatchVersion(base).split(".").map(Number));
     setCopied(false);
-  }, [open, local]);
+  }, [open, base]);
 
   const version = digits.join(".");
-  const error = newVersionError(version, local);
+  const error = newVersionError(version, base);
   const pullText = pullRequestText(local, remote);
 
   const confirm = async () => {
@@ -61,7 +63,7 @@ export function UpdateDialog({ open, onOpenChange, local, remote, filesDifferent
               ? "اختر رقم الإصدار الذي سيُرسل به الموقع إلى GitHub."
               : step === "pull"
                 ? "انسخ الطلب وأرسله في المحادثة لجلب ملفات GitHub إلى الموقع."
-                : <>الموقع و GitHub على الإصدار <b dir="ltr">{local}</b>{filesDifferent > 0 ? ` · ${filesDifferent} ملف مختلف` : " · الملفات متطابقة"}.</>}
+                : <>الموقع و GitHub على الإصدار <b dir="ltr">{base}</b>{filesDifferent > 0 ? ` · ${filesDifferent} ملف مختلف` : " · الملفات متطابقة"}.</>}
           </DialogDescription>
         </DialogHeader>
 
@@ -86,9 +88,9 @@ export function UpdateDialog({ open, onOpenChange, local, remote, filesDifferent
 
         {step === "push" && (
           <div className="grid gap-4">
-            <VersionPicker value={digits} onChange={setDigits} />
+            <VersionPicker value={digits} onChange={setDigits} min={base} />
             <p className="text-center text-xs text-muted-foreground">
-              الحالي <b dir="ltr" className="font-mono">{local}</b> ← الجديد <b dir="ltr" className="font-mono text-accent-pink">{version}</b>
+              الحالي <b dir="ltr" className="font-mono">{base}</b> ← الجديد <b dir="ltr" className="font-mono text-accent-pink">{version}</b>
             </p>
             {error && <p className="text-center text-xs text-destructive">{error}</p>}
             <div className="flex gap-2">

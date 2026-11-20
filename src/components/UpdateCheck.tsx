@@ -2,14 +2,14 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { BellRing, Check, Copy, ExternalLink, Loader2, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import {
-  APP_VERSION, UPDATE_REPO_URL, diffCount, fetchRemoteVersion, requestText, sendNudge, updateStatus,
+  APP_VERSION, UPDATE_REPO_URL, diffCount, fetchRemoteVersion, latestVersion, requestText, sendNudge, updateStatus,
   type FileDiff, type UpdateStatus,
 } from "@/lib/app-update";
 import { syncEditorCode } from "@/lib/source-sync.functions";
 import { UpdateDialog } from "@/components/UpdateDialog";
 
 type Result = {
-  kind: "same" | "same-version" | "pushed" | "pull-prompt" | "version-only";
+  kind: "same" | "same-version" | "site-newer" | "pushed" | "pull-prompt" | "version-only";
   status: UpdateStatus;
   local: string;
   remote: string | null;
@@ -28,6 +28,7 @@ const VERSION_ONLY: Record<UpdateStatus, string> = {
 function message(r: Result) {
   if (r.kind === "same") return "نسختك مطابقة لـ GitHub: نفس رقم الإصدار ونفس الملفات.";
   if (r.kind === "same-version") return `رقم الإصدار مطابق لـ GitHub، لكن يوجد ${diffCount(r.diff!)} ملف مختلف. اضغط «تحديث» لاختيار الاتجاه.`;
+  if (r.kind === "site-newer") return `نسختك أحدث من GitHub، ويوجد ${diffCount(r.diff!)} ملف مختلف. اضغط «فحص التحديث» لإرسالها.`;
   if (r.kind === "pushed") return `أُرسل ${diffCount(r.diff!)} ملف إلى GitHub بالإصدار ${r.local}. النسخة السابقة محفوظة في السجل.`;
   if (r.kind === "pull-prompt") return "يوجد إصدار أحدث على GitHub. انسخ الطلب وأرسله في المحادثة لتحديث الموقع.";
   return VERSION_ONLY[r.status];
@@ -44,7 +45,11 @@ export function UpdateCheck() {
 
   type Sync = Extract<Awaited<ReturnType<typeof syncEditorCode>>, { available: true }>;
   const fromSync = (res: Sync): Result => ({
-    kind: res.pushed ? "pushed" : res.action === "pull-prompt" ? "pull-prompt" : res.status === "same" ? (diffCount(res.diff) > 0 ? "same-version" : "same") : "pushed",
+    // `res.diff` holds code files only, so a version number that differs on its own counts as "same".
+    kind: res.pushed ? "pushed"
+      : res.action === "same" ? "same"
+      : res.action === "pull-prompt" ? "pull-prompt"
+      : res.status === "same" ? "same-version" : "site-newer",
     status: res.status, local: res.local, remote: res.remote, diff: res.diff, url: res.pushed?.url,
     text: requestText(res.status, res.local, res.remote),
   });
@@ -106,6 +111,8 @@ export function UpdateCheck() {
     }
   };
 
+  /** Same code on both sides → the newest number (GitHub's when it is higher); otherwise the site's own number. */
+  const shownVersion = !result ? APP_VERSION : result.kind === "same" ? latestVersion(result.local, result.remote) : result.local;
   const showPrompt = result && (result.kind === "pull-prompt" || (result.kind === "version-only" && result.status !== "same"));
   /** The update window opens only when the files really differ (same version, different files). */
   const canUpdate = result?.kind === "same-version";
@@ -122,7 +129,7 @@ export function UpdateCheck() {
       <div className="flex flex-wrap items-center justify-between gap-2">
         <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs text-muted-foreground">
           <span className="size-2 rounded-full bg-accent-pink" aria-hidden />
-          الإصدار <b className="font-mono text-foreground" dir="ltr">{result?.local ?? APP_VERSION}</b>
+          الإصدار <b className="font-mono text-foreground" dir="ltr">{shownVersion}</b>
         </span>
         <button
           type="button"
@@ -151,7 +158,7 @@ export function UpdateCheck() {
         <div role="status" className="mt-3 rounded-xl border border-border bg-card p-3 text-sm shadow-[var(--card-shadow)]">
           <p className="font-medium">{message(result)}</p>
           <p className="mt-1 text-xs text-muted-foreground">
-            الموقع <b dir="ltr">{result.local}</b> · GitHub <b dir="ltr">{result.remote ?? "—"}</b> ·{" "}
+            الموقع <b dir="ltr">{result.kind === "same" ? shownVersion : result.local}</b> · GitHub <b dir="ltr">{result.remote ?? "—"}</b> ·{" "}
             <a href={UPDATE_REPO_URL} target="_blank" rel="noreferrer" className="underline">المستودع</a>
             {result.url && <> · <a href={result.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 underline">التحديث على GitHub <ExternalLink size={12} /></a></>}
           </p>
@@ -160,7 +167,7 @@ export function UpdateCheck() {
               <RefreshCw size={16} /> تحديث
             </button>
           )}
-          {(result.kind === "pushed" || result.kind === "same-version") && files.length > 0 && (
+          {(result.kind === "pushed" || result.kind === "same-version" || result.kind === "site-newer" || result.kind === "pull-prompt") && files.length > 0 && (
             <details className="mt-2">
               <summary className="cursor-pointer text-xs text-muted-foreground">الملفات المختلفة ({files.length})</summary>
               <ul dir="ltr" className="mt-1 max-h-48 overflow-auto rounded-md bg-muted p-2 font-mono text-[11px]">

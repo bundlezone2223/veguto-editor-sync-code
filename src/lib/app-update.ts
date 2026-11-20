@@ -103,15 +103,29 @@ export function diffCount(d: FileDiff) {
   return d.added.length + d.changed.length + d.removed.length;
 }
 
+/** The file that only holds the version number. */
+export const VERSION_FILE = "src/version.ts";
+
+/** The real code difference: the version file alone is not a code change (only its number differs). */
+export function codeDiff(d: FileDiff): FileDiff {
+  const keep = (l: string[]) => l.filter((p) => p !== VERSION_FILE);
+  return { added: keep(d.added), changed: keep(d.changed), removed: keep(d.removed) };
+}
+
+/** The newest of the two numbers: what the site really is when its code matches GitHub. */
+export function latestVersion(local: string, remote: string | null): string {
+  return remote && compareVersions(remote, local) > 0 ? remote : local;
+}
+
 /**
- * What the update button does:
- * - GitHub has a higher version → ask (prompt) to update the site, never overwrite GitHub.
- * - same version and same files → nothing to do.
- * - otherwise (files differ, or the site is newer) → send the site's files to GitHub.
+ * What the update button does (`changedFiles` counts code files only, never the version file):
+ * - same code → nothing to do, whatever the two version numbers say.
+ * - code differs and GitHub has a higher version → ask (prompt) to bring GitHub to the site.
+ * - otherwise (same or newer site version) → send the site's files to GitHub.
  */
 export function decideSync(status: UpdateStatus, changedFiles: number): "same" | "push" | "pull-prompt" {
+  if (changedFiles === 0) return "same";
   if (status === "site-older") return "pull-prompt";
-  if (status === "same" && changedFiles === 0) return "same";
   return "push";
 }
 

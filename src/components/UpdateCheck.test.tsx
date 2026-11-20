@@ -13,7 +13,7 @@ import { UpdateCheck } from "@/components/UpdateCheck";
 
 type SyncOk = {
   available: true;
-  status: "same";
+  status: "same" | "site-older" | "github-older";
   local: string;
   remote: string | null;
   action: "same" | "push";
@@ -68,6 +68,17 @@ describe("update check button and update window", () => {
     expect(screen.queryByRole("button", { name: "تحديث" })).not.toBeInTheDocument();
     showResult();
     expect(screen.getByRole("button", { name: "تحديث" })).toBeInTheDocument();
+  });
+
+  it("shows GitHub's higher number and no red dot when only the version number differs", async () => {
+    sync.mockResolvedValue({ ...SAME_FILES, status: "site-older", local: "1.4.3", remote: "1.4.4" });
+    render(<UpdateCheck />);
+    await finishAutomaticCheck();
+    expect(document.querySelector(".check-dot")).toBeNull();
+    expect(screen.getAllByText("1.4.4").length).toBeGreaterThan(0);
+    showResult();
+    expect(screen.getByText(/نسختك مطابقة لـ GitHub/)).toBeInTheDocument();
+    expect(screen.queryByText(/يوجد إصدار أحدث على GitHub/)).not.toBeInTheDocument();
   });
 
   it("never pushes files during the automatic page-entry check", async () => {

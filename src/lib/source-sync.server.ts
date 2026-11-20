@@ -8,7 +8,7 @@ import { readFile, readdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import ignore from "ignore";
 import {
-  UPDATE_REPO, decideSync, diffCount, diffFiles, newVersionError, readVersion, setVersionText, updateStatus,
+  UPDATE_REPO, codeDiff, decideSync, diffCount, diffFiles, newVersionError, readVersion, setVersionText, updateStatus,
   type FileDiff, type UpdateStatus,
 } from "./app-update";
 
@@ -118,9 +118,14 @@ export async function compareAndPush(push: boolean, version?: string): Promise<S
 
   const status = updateStatus(local, remote);
   const diff = diffFiles(localSha, remoteSha);
-  const action = decideSync(status, diffCount(diff));
-  const result: SyncResult = { available: true, status, local, remote, action, diff, pushed: null };
-  if (newVersionText !== null && status === "site-older") throw new Error(`GitHub عنده إصدار أحدث (${remote})؛ اجلبه أولا`);
+  const code = codeDiff(diff);
+  const action = decideSync(status, diffCount(code));
+  // `diff` shown to the user is the code difference only; a different version number alone is not a change.
+  const result: SyncResult = { available: true, status, local, remote, action, diff: code, pushed: null };
+  if (newVersionText !== null && remote) {
+    const err = newVersionError(version!, remote);
+    if (err) throw new Error(err);
+  }
   if (!push || action !== "push") return result;
 
   // Upload only the files that changed, then one commit on top of the current GitHub copy.
@@ -142,11 +147,11 @@ export async function compareAndPush(push: boolean, version?: string): Promise<S
     content: JSON.stringify({ kind: "editor-sync", version: local, previousVersion: remote, previousSha: parent, savedAt, ...diff }, null, 2),
   });
   const tree = await ghJson(token, "/git/trees", { method: "POST", body: baseTree ? { tree: entries, base_tree: baseTree } : { tree: entries } });
-  const message = `Veguto editor ${local} — ${diffCount(diff)} file(s) updated`;
+  const message = `Veguto editor ${local} — ${diffCount(code)} file(s) updated`;
   const commit = await ghJson(token, "/git/commits", { method: "POST", body: { message, tree: tree.sha, parents: parent ? [parent] : [] } });
   if (parent) await ghJson(token, "/git/refs/heads/main", { method: "PATCH", body: { sha: commit.sha } });
   else await ghJson(token, "/git/refs", { method: "POST", body: { ref: "refs/heads/main", sha: commit.sha } });
   if (newVersionText !== null) await writeFile(path.join(root, "src/version.ts"), newVersionText);
-  result.pushed = { sha: commit.sha, url: `https://github.com/${UPDATE_REPO}/commit/${commit.sha}`, count: diffCount(diff) };
+  result.pushed = { sha: commit.sha, url: `https://github.com/${UPDATE_REPO}/commit/${commit.sha}`, count: diffCount(code) };
   return result;
 }
