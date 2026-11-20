@@ -1,0 +1,21 @@
+{
+  "kind": "editor-sync",
+  "version": "1.4.1",
+  "previousVersion": "1.4.0",
+  "previousSha": "939472a33ae056338b65ba49ebeb67b2411461fc",
+  "savedAt": "2026-11-20T12:30:23.366Z",
+  "added": [
+    "src/components/UpdateDialog.tsx",
+    "src/components/VersionPicker.tsx"
+  ],
+  "changed": [
+    "src/components/UpdateCheck.tsx",
+    "src/lib/app-update.test.ts",
+    "src/lib/app-update.ts",
+    "src/lib/source-sync.functions.ts",
+    "src/lib/source-sync.server.ts",
+    "src/styles.css",
+    "src/version.ts"
+  ],
+  "removed": []
+}

@@ -4,10 +4,13 @@
  * in the GitHub history, plus a small record under history/).
  */
 import { createHash } from "node:crypto";
-import { readFile, readdir } from "node:fs/promises";
+import { readFile, readdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import ignore from "ignore";
-import { UPDATE_REPO, decideSync, diffCount, diffFiles, readVersion, updateStatus, type FileDiff, type UpdateStatus } from "./app-update";
+import {
+  UPDATE_REPO, decideSync, diffCount, diffFiles, newVersionError, readVersion, setVersionText, updateStatus,
+  type FileDiff, type UpdateStatus,
+} from "./app-update";
 
 const API = `https://api.github.com/repos/${UPDATE_REPO}`;
 const SKIP_DIRS = new Set([".git", "node_modules", ".jj"]);
@@ -72,11 +75,23 @@ export type SyncResult = {
   pushed: { sha: string; url: string; count: number } | null;
 };
 
-export async function compareAndPush(push: boolean): Promise<SyncResult> {
+/**
+ * `version` (optional): send the site with this new version number. The version file is changed in
+ * the upload first and written to the site only after GitHub accepted the commit.
+ */
+export async function compareAndPush(push: boolean, version?: string): Promise<SyncResult> {
   const token = process.env["GITHUB_PERSONAL_ACCESS_TOKEN"];
   if (!token) throw new Error("GITHUB_PERSONAL_ACCESS_TOKEN غير مضبوط");
   const root = process.cwd();
   const files = await readLocalFiles(root);
+  let newVersionText: string | null = null;
+  if (version !== undefined) {
+    const current = files.get("src/version.ts")?.toString("utf8") ?? "";
+    const err = newVersionError(version, readVersion(current) ?? "0.0.0");
+    if (err) throw new Error(err);
+    newVersionText = setVersionText(current, version, new Date().toISOString().slice(0, 10));
+    files.set("src/version.ts", Buffer.from(newVersionText));
+  }
   const local = readVersion(files.get("src/version.ts")?.toString("utf8") ?? "") ?? "0.0.0";
   const localSha: Record<string, string> = {};
   for (const [p, buf] of files) localSha[p] = gitBlobSha(buf);
@@ -105,6 +120,7 @@ export async function compareAndPush(push: boolean): Promise<SyncResult> {
   const diff = diffFiles(localSha, remoteSha);
   const action = decideSync(status, diffCount(diff));
   const result: SyncResult = { available: true, status, local, remote, action, diff, pushed: null };
+  if (newVersionText !== null && status === "site-older") throw new Error(`GitHub عنده إصدار أحدث (${remote})؛ اجلبه أولا`);
   if (!push || action !== "push") return result;
 
   // Upload only the files that changed, then one commit on top of the current GitHub copy.
@@ -130,6 +146,7 @@ export async function compareAndPush(push: boolean): Promise<SyncResult> {
   const commit = await ghJson(token, "/git/commits", { method: "POST", body: { message, tree: tree.sha, parents: parent ? [parent] : [] } });
   if (parent) await ghJson(token, "/git/refs/heads/main", { method: "PATCH", body: { sha: commit.sha } });
   else await ghJson(token, "/git/refs", { method: "POST", body: { ref: "refs/heads/main", sha: commit.sha } });
+  if (newVersionText !== null) await writeFile(path.join(root, "src/version.ts"), newVersionText);
   result.pushed = { sha: commit.sha, url: `https://github.com/${UPDATE_REPO}/commit/${commit.sha}`, count: diffCount(diff) };
   return result;
 }

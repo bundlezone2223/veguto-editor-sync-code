@@ -87,3 +87,50 @@
   .chat-md pre code { background: none; padding: 0; }
   .chat-md blockquote { border-inline-start: 3px solid var(--accent-pink); padding-inline-start: 0.75rem; color: var(--muted-foreground); }
 }
+
+/* Version picker in the update window: big numbers with arrows above and below. */
+@layer components {
+  .version-wheel {
+    display: flex; flex-direction: column; align-items: center; gap: 0.25rem;
+    min-width: 5.5rem; padding: 0.5rem 0.5rem 0.6rem; border-radius: 1rem;
+    border: 1px solid var(--color-border);
+    background: linear-gradient(180deg, var(--card) 0%, var(--muted) 100%);
+    box-shadow: var(--card-shadow); outline: none; transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .version-wheel:focus-visible, .version-wheel:hover { border-color: var(--accent-pink); }
+  .version-wheel:focus-visible { box-shadow: 0 0 0 3px color-mix(in oklch, var(--accent-pink) 30%, transparent); }
+  .version-arrow {
+    display: grid; place-items: center; width: 2.75rem; height: 2.25rem; border-radius: 0.6rem;
+    color: var(--muted-foreground); transition: background-color 0.15s, color 0.15s, transform 0.1s;
+  }
+  .version-arrow:hover:not(:disabled) { background: color-mix(in oklch, var(--accent-pink) 14%, transparent); color: var(--accent-pink); }
+  .version-arrow:active:not(:disabled) { transform: scale(0.9); }
+  .version-arrow:disabled { opacity: 0.3; cursor: not-allowed; }
+  .version-digit {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 3.5rem; line-height: 1;
+    font-weight: 800; font-variant-numeric: tabular-nums; color: var(--foreground);
+    animation: version-pop 0.18s ease-out;
+  }
+  .version-dot { font-size: 3rem; font-weight: 800; line-height: 1; color: var(--accent-pink); margin-bottom: 1.5rem; }
+  .update-option {
+    display: flex; align-items: center; gap: 0.75rem; width: 100%; padding: 0.85rem 1rem; text-align: start;
+    border: 1px solid var(--color-border); border-radius: 0.9rem; background: var(--card);
+    transition: border-color 0.15s, background-color 0.15s, transform 0.1s;
+  }
+  .update-option:hover { border-color: var(--accent-pink); background: color-mix(in oklch, var(--accent-pink) 6%, var(--card)); }
+  .update-option:active { transform: scale(0.99); }
+  .update-option-icon {
+    display: grid; place-items: center; width: 2.5rem; height: 2.5rem; flex-shrink: 0; border-radius: 0.7rem;
+    background: color-mix(in oklch, var(--accent-pink) 15%, transparent); color: var(--accent-pink);
+  }
+  .update-btn-primary, .update-btn-ghost {
+    display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
+    padding: 0.6rem 1rem; border-radius: 0.6rem; font-size: 0.875rem; font-weight: 600; transition: opacity 0.15s, background-color 0.15s;
+  }
+  .update-btn-primary { background: var(--accent-pink); color: var(--card); }
+  .update-btn-primary:hover:not(:disabled) { opacity: 0.9; }
+  .update-btn-ghost { border: 1px solid var(--color-border); background: var(--card); }
+  .update-btn-ghost:hover:not(:disabled) { background: var(--muted); }
+  .update-btn-primary:disabled, .update-btn-ghost:disabled { opacity: 0.5; cursor: not-allowed; }
+  @keyframes version-pop { from { transform: scale(0.8); opacity: 0.4; } to { transform: scale(1); opacity: 1; } }
+}

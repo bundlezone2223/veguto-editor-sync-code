@@ -114,3 +114,31 @@ export function decideSync(status: UpdateStatus, changedFiles: number): "same" |
   if (status === "same" && changedFiles === 0) return "same";
   return "push";
 }
+
+/** A version the user can pick: three numbers, e.g. 1.4.2. */
+export const VERSION_PATTERN = /^\d{1,3}\.\d{1,3}\.\d{1,3}$/;
+
+/** Why `next` cannot be sent as the new version (null when it can): it may not be lower than the current one. */
+export function newVersionError(next: string, current: string): string | null {
+  if (!VERSION_PATTERN.test(next)) return "رقم الإصدار يجب أن يكون بالشكل 1.2.3";
+  if (compareVersions(next, current) < 0) return `الرقم ${next} أقدم من الإصدار الحالي ${current}`;
+  return null;
+}
+
+/** The suggested next version: the last number plus one. */
+export function nextPatchVersion(v: string): string {
+  const [a = 0, b = 0, c = 0] = parts(v);
+  return `${a}.${b}.${c + 1}`;
+}
+
+/** Version file text with a new version number and date. */
+export function setVersionText(text: string, version: string, date: string): string {
+  return text
+    .replace(/(APP_VERSION\s*=\s*["'])[\d.]+(["'])/, `$1${version}$2`)
+    .replace(/(APP_VERSION_DATE\s*=\s*["'])[^"']*(["'])/, `$1${date}$2`);
+}
+
+/** Chat request to bring the GitHub files into the site even when both have the same version. */
+export function pullRequestText(local: string, remote: string | null): string {
+  return `فحص التحديث: نسخة الموقع ${local}، نسخة GitHub ${remote ?? "غير موجودة"}. اجلب ملفات GitHub إلى الموقع.`;
+}
