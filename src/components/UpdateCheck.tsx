@@ -113,7 +113,7 @@ export function UpdateCheck() {
       <div className="flex flex-wrap items-center justify-between gap-2">
         <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs text-muted-foreground">
           <span className="size-2 rounded-full bg-accent-pink" aria-hidden />
-          الإصدار <b className="font-mono text-foreground" dir="ltr">{APP_VERSION}</b>
+          الإصدار <b className="font-mono text-foreground" dir="ltr">{result?.local ?? APP_VERSION}</b>
         </span>
         <button
           type="button"
