@@ -72,3 +72,55 @@ export function GhostButton({ children, onClick, disabled, ariaLabel }: { childr
     </button>
   );
 }
+
+/** − value + control for small whole numbers. */
+export function NumberStepper({ value, onChange, min, max, label }: { value: number; onChange: (v: number) => void; min: number; max: number; label: string }) {
+  const set = (v: number) => onChange(Math.max(min, Math.min(max, Math.round(v) || min)));
+  const btn = "grid size-7 place-items-center rounded-md text-base font-bold text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-30";
+  return (
+    <div role="group" aria-label={label} className="inline-flex items-center rounded-lg border border-border bg-background p-0.5">
+      <button type="button" aria-label={`إنقاص ${label}`} className={btn} disabled={value <= min} onClick={() => set(value - 1)}>−</button>
+      <input
+        aria-label={label}
+        inputMode="numeric"
+        value={value}
+        onChange={(e) => set(Number(e.target.value.replace(/\D/g, "")))}
+        className="w-9 bg-transparent text-center text-sm font-semibold tabular-nums outline-none"
+      />
+      <button type="button" aria-label={`زيادة ${label}`} className={btn} disabled={value >= max} onClick={() => set(value + 1)}>+</button>
+    </div>
+  );
+}
+
+/** Words as removable chips; Enter or comma adds one. Suggestions come from the site. */
+export function ChipsInput({ values, onChange, suggestions = [], placeholder, label, listId }: {
+  values: string[]; onChange: (v: string[]) => void; suggestions?: string[]; placeholder?: string; label: string; listId: string;
+}) {
+  const add = (raw: string) => {
+    const words = raw.split(",").map((w) => w.trim()).filter(Boolean);
+    if (words.length) onChange([...new Set([...values, ...words])]);
+  };
+  return (
+    <div className="flex min-h-9 flex-wrap items-center gap-1 rounded-md border border-border bg-background px-1.5 py-1 focus-within:border-accent-pink" dir="ltr">
+      {values.map((v) => (
+        <span key={v} className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-xs">
+          {v}
+          <button type="button" aria-label={`إزالة ${v}`} onClick={() => onChange(values.filter((x) => x !== v))} className="text-muted-foreground hover:text-destructive">×</button>
+        </span>
+      ))}
+      <input
+        aria-label={label}
+        list={listId}
+        placeholder={values.length ? "" : placeholder}
+        onKeyDown={(e) => {
+          const el = e.currentTarget;
+          if ((e.key === "Enter" || e.key === ",") && el.value.trim()) { e.preventDefault(); add(el.value); el.value = ""; }
+          else if (e.key === "Backspace" && !el.value && values.length) onChange(values.slice(0, -1));
+        }}
+        onBlur={(e) => { if (e.currentTarget.value.trim()) { add(e.currentTarget.value); e.currentTarget.value = ""; } }}
+        className="min-w-20 flex-1 bg-transparent px-1 text-xs outline-none"
+      />
+      <datalist id={listId}>{suggestions.filter((s) => !values.includes(s)).map((s) => <option key={s} value={s} />)}</datalist>
+    </div>
+  );
+}

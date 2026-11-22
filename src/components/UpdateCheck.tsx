@@ -115,7 +115,7 @@ export function UpdateCheck() {
   const shownVersion = !result ? APP_VERSION : result.kind === "same" ? latestVersion(result.local, result.remote) : result.local;
   const showPrompt = result && (result.kind === "pull-prompt" || (result.kind === "version-only" && result.status !== "same"));
   /** The update window opens only when the files really differ (same version, different files). */
-  const canUpdate = result?.kind === "same-version";
+  const canUpdate = !!result && (result.kind === "same-version" || result.kind === "pull-prompt") && !!result.diff && diffCount(result.diff) > 0;
   /** Files that are not the same on both sides. A finished push is excluded: those files are identical now. */
   const filesDiffer = !!result && result.kind !== "pushed" && !!result.diff && diffCount(result.diff) > 0;
   const files = result?.diff ? [

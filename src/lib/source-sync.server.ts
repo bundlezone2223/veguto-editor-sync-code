@@ -126,7 +126,9 @@ export async function compareAndPush(push: boolean, version?: string): Promise<S
     const err = newVersionError(version!, remote);
     if (err) throw new Error(err);
   }
-  if (!push || action !== "push") return result;
+  // A picked version (update window) may send the site even when its own number was older; it is already >= GitHub's.
+  const canSend = action === "push" || (newVersionText !== null && action === "pull-prompt");
+  if (!push || !canSend) return result;
 
   // Upload only the files that changed, then one commit on top of the current GitHub copy.
   const upload = [...diff.added, ...diff.changed];

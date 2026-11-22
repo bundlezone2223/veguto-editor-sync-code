@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { zipSync, strToU8 } from "fflate";
-import { DEFAULT_SITE_CONFIG, moveItem, normalizeSiteConfig } from "@/lib/site-config";
+import { DEFAULT_HOME_CONFIG, buildFeed, getBlock, moveItem, moveTo, normalizeHomeConfig, statValue, type FeedArticle } from "@/lib/site-config";
 import { buildRows, emptyIndex, readSiteCategories, rowsToAutoSave, type LibraryEntry, type LibraryIndex } from "@/lib/article-library";
 import { readZip } from "@/lib/zip-upload";
 import type { Project } from "@/lib/projects-store";
@@ -13,19 +13,40 @@ const project = (over: Partial<Project> = {}): Project => ({
 });
 
 describe("home layout settings", () => {
-  it("fills missing parts from defaults and keeps saved changes", () => {
-    const c = normalizeSiteConfig({ hero: { title: "My Wiki" }, discord: { visible: false } });
-    expect(c.hero.title).toBe("My Wiki");
-    expect(c.hero.kicker).toBe(DEFAULT_SITE_CONFIG.hero.kicker);
-    expect(c.discord.visible).toBe(false);
-    expect(c.sections).toHaveLength(7);
+  it("fills missing parts from what the site shows today and keeps saved changes", () => {
+    const c = normalizeHomeConfig({ blocks: [{ type: "hero", title: "My Wiki" }, { type: "discord", visible: false }] });
+    expect(getBlock(c, "hero").title).toBe("My Wiki");
+    expect(getBlock(c, "hero").kicker).toBe(getBlock(DEFAULT_HOME_CONFIG, "hero").kicker);
+    expect(getBlock(c, "discord").visible).toBe(false);
+    expect(getBlock(c, "feed").sections).toHaveLength(7);
   });
-  it("drops sections without a name", () => {
-    expect(normalizeSiteConfig({ sections: [{ label: "" }, { label: "Anime" }] }).sections.map((s) => s.label)).toEqual(["Anime"]);
+  it("keeps the saved order of elements and adds any missing one at the end", () => {
+    const c = normalizeHomeConfig({ blocks: [{ type: "tags" }, { type: "hero" }, { type: "tags" }, { type: "bogus" }] });
+    expect(c.blocks.map((b) => b.type)).toEqual(["tags", "hero", "stats", "feed", "discord"]);
   });
-  it("reorders sections", () => {
-    expect(moveItem(["a", "b", "c"], 2, -1)).toEqual(["a", "c", "b"]);
+  it("drops sections without a name and duplicate section links", () => {
+    const c = normalizeHomeConfig({ blocks: [{ type: "feed", sections: [{ highlight: "" }, { highlight: "Anime" }, { key: "anime", highlight: "Anime 2" }] }] });
+    expect(getBlock(c, "feed").sections.map((s) => s.highlight)).toEqual(["Anime"]);
+  });
+  it("keeps articles per group between 1 and 12", () => {
+    const c = normalizeHomeConfig({ blocks: [{ type: "feed", mixed: { perGroup: 99 } }] });
+    expect(getBlock(c, "feed").mixed.perGroup).toBe(12);
+  });
+  it("moves an element by dragging it to a new place", () => {
+    expect(moveTo(["a", "b", "c", "d"], 0, 2)).toEqual(["b", "c", "a", "d"]);
     expect(moveItem(["a", "b"], 0, -1)).toEqual(["a", "b"]);
+  });
+  it("builds the feed like the site: groups of single articles alternating with section shelves", () => {
+    const art = (id: string, category: string): FeedArticle => ({ id, title: id, description: "", thumbnail: "", category, tags: [] });
+    const feed = getBlock(DEFAULT_HOME_CONFIG, "feed");
+    const rows = buildFeed(feed, ["1", "2", "3", "4", "5"].map((n) => art(n, n === "5" ? "gaming" : "animation")), null);
+    expect(rows.map((r) => r.grid?.length ?? 0)).toEqual([4, 1]);
+    expect(rows.map((r) => r.shelf?.section.key ?? null)).toEqual(["games", "animation"]);
+    expect(buildFeed({ ...feed, mixed: { ...feed.mixed, visible: false } }, [art("1", "animation")], null)[0]!.grid).toBeNull();
+  });
+  it("shows the site's article count like 100+", () => {
+    expect(statValue({ id: "a", source: "articles", value: "", label: "", visible: true }, { articles: 108, categories: 7, tags: 3 })).toBe("100+");
+    expect(statValue({ id: "a", source: "custom", value: "14k+", label: "", visible: true }, { articles: 1, categories: 1, tags: 1 })).toBe("14k+");
   });
 });
 

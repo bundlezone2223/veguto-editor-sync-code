@@ -19,6 +19,21 @@
   --radius-md: 8px;
   --shadow-card: var(--card-shadow);
   --font-arabic: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+
+  /* The main Veguto site's own palette and fonts, used only by the live home preview. */
+  --color-vp-bg: var(--vp-bg);
+  --color-vp-fg: var(--vp-fg);
+  --color-vp-card: var(--vp-card);
+  --color-vp-primary: var(--vp-primary);
+  --color-vp-primary-soft: var(--vp-primary-soft);
+  --color-vp-accent: var(--vp-accent);
+  --color-vp-muted: var(--vp-muted);
+  --color-vp-muted-fg: var(--vp-muted-fg);
+  --color-vp-border: var(--vp-border);
+  --color-vp-discord: var(--vp-discord);
+  --color-vp-on-color: var(--vp-on-color);
+  --font-vp-display: "Dancing Script", cursive;
+  --font-vp-sans: "Quicksand", system-ui, sans-serif;
 }
 
 :root {
@@ -35,6 +50,20 @@
   --hero-to: oklch(0.94 0.05 300);
   --destructive: oklch(0.58 0.2 25);
   --card-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+
+  --vp-bg: oklch(0.975 0.005 250);
+  --vp-fg: oklch(0.32 0.03 260);
+  --vp-card: oklch(1 0 0);
+  --vp-primary: oklch(0.72 0.22 340);
+  --vp-primary-soft: oklch(0.96 0.04 340);
+  --vp-accent: oklch(0.74 0.16 295);
+  --vp-muted: oklch(0.96 0.005 250);
+  --vp-muted-fg: oklch(0.55 0.02 250);
+  --vp-border: oklch(0.92 0.01 250);
+  --vp-discord: oklch(0.58 0.2 275);
+  --vp-discord-mid: oklch(0.66 0.15 278);
+  --vp-discord-end: oklch(0.72 0.14 295);
+  --vp-on-color: oklch(1 0 0);
 }
 
 @layer base {
@@ -153,4 +182,69 @@
 
 @media (prefers-reduced-motion: reduce) {
   .check-dot { animation: none; box-shadow: none; }
+}
+
+/* ⠿ drag grip on reorderable cards. */
+@layer components {
+  .drag-handle {
+    display: grid; place-items: center; width: 1.75rem; height: 1.75rem; flex-shrink: 0;
+    border-radius: 0.5rem; font-size: 1.1rem; line-height: 1; color: var(--muted-foreground);
+    cursor: grab; touch-action: none; user-select: none; transition: background-color 0.15s, color 0.15s;
+  }
+  .drag-handle:hover, .drag-handle:focus-visible { background: color-mix(in oklch, var(--accent-pink) 14%, transparent); color: var(--accent-pink); outline: none; }
+  .drag-handle:active { cursor: grabbing; }
+  .is-dragging { opacity: 0.92; }
+  .is-dragging > * { box-shadow: 0 16px 40px -12px color-mix(in oklch, var(--accent-pink) 45%, transparent); }
+}
+
+/* Live home preview: a scaled copy of the main site (its own colors, fonts and spacing). */
+@layer components {
+  .vp { background: var(--vp-bg); color: var(--vp-fg); font-family: var(--font-vp-sans); line-height: 1.6; font-weight: 400; }
+  .vp * { border-color: var(--vp-border); }
+  .vp-hero {
+    background: linear-gradient(135deg, color-mix(in oklab, var(--vp-primary) 22%, white) 0%, color-mix(in oklab, var(--vp-accent) 16%, white) 100%);
+    border-radius: 24px; padding: 56px 32px; text-align: center;
+    box-shadow: 0 10px 30px -18px color-mix(in oklab, var(--vp-primary) 50%, transparent);
+  }
+  .vp-stat { background: var(--vp-card); border-radius: 12px; padding: 28px 20px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,.05); }
+  .vp-stat-num { font-weight: 700; font-size: 34px; color: var(--vp-primary); line-height: 1; }
+  .vp-stat-label { margin-top: 8px; font-size: 13px; color: var(--vp-muted-fg); }
+  .vp-section-title { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 22px; margin: 40px 0 20px; }
+  .vp-section-title::before { content: ''; width: 4px; height: 22px; background: var(--vp-primary); border-radius: 4px; }
+  .vp-card {
+    background: var(--vp-card); border: 1px solid color-mix(in oklab, var(--vp-border) 60%, transparent);
+    border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  }
+  .vp-discord-banner { background: linear-gradient(to bottom right, var(--vp-discord), var(--vp-discord-mid), var(--vp-discord-end)); color: var(--vp-on-color); }
+  .vp-sidebar-link { display: flex; align-items: center; gap: 10px; height: 40px; padding: 8px 14px; border-radius: 10px; font-size: 14px; }
+  .vp-noscroll { scrollbar-width: none; }
+  .vp-noscroll::-webkit-scrollbar { display: none; }
+
+  /* Editing layer on top of the preview; sizes are divided by the zoom so they stay readable. */
+  .vp-block { position: relative; border-radius: calc(14px / var(--vp-z, 1)); cursor: pointer; }
+  .vp-block::after {
+    content: ''; position: absolute; inset: calc(-6px / var(--vp-z, 1)); pointer-events: none;
+    border: calc(2px / var(--vp-z, 1)) dashed transparent; border-radius: inherit; transition: border-color 0.15s;
+  }
+  .vp-block:hover::after { border-color: color-mix(in oklch, var(--accent-pink) 55%, transparent); }
+  .vp-block[data-selected]::after { border-style: solid; border-color: var(--accent-pink); }
+  .vp-block-tools {
+    position: absolute; z-index: 5; inset-block-start: calc(6px / var(--vp-z, 1)); inset-inline-start: calc(6px / var(--vp-z, 1));
+    display: flex; align-items: center; gap: calc(4px / var(--vp-z, 1)); opacity: 0; transition: opacity 0.15s;
+    font-family: var(--font-arabic); direction: rtl;
+  }
+  .vp-block:hover .vp-block-tools, .vp-block[data-selected] .vp-block-tools, .vp-block-tools:focus-within { opacity: 1; }
+  @media (hover: none) { .vp-block-tools { opacity: 1; } }
+  .vp-block-tools .drag-handle {
+    width: calc(30px / var(--vp-z, 1)); height: calc(30px / var(--vp-z, 1)); font-size: calc(18px / var(--vp-z, 1));
+    border-radius: calc(8px / var(--vp-z, 1)); background: var(--card); color: var(--foreground); box-shadow: var(--card-shadow);
+  }
+  .vp-block-label {
+    padding: calc(3px / var(--vp-z, 1)) calc(8px / var(--vp-z, 1)); border-radius: calc(999px / var(--vp-z, 1));
+    font-size: calc(11px / var(--vp-z, 1)); font-weight: 600; line-height: 1.4; background: var(--accent-pink); color: var(--card); white-space: nowrap;
+  }
+  .vp-hidden-block {
+    display: flex; align-items: center; justify-content: center; gap: 8px; margin: 12px 0; padding: 14px; border-radius: 12px;
+    border: 2px dashed var(--vp-border); color: var(--vp-muted-fg); font-family: var(--font-arabic); font-size: 14px; direction: rtl;
+  }
 }

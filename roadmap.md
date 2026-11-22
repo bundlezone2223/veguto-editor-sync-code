@@ -18,7 +18,8 @@
 - [x] Bottom navigation bar (Projects / Dashboard) on the home and dashboard pages.
 - [x] Dashboard: control the main site's home page (banner, numbers, latest articles, sections, featured blocks, quick links, Discord) with live preview, publish to GitHub.
 - [x] Dashboard: publish articles to the main site with draft/published/changed labels; upload a full project ZIP to the code repo. Verified on temporary GitHub branches.
-- [ ] Main Veguto Wiki site reads `content/home.json` and `content/articles/*` — waiting on the main site's project/repo from the user.
+- [ ] Main Veguto Wiki site (bundlezone2223/veguto) reads `content/home.json` — waiting on the user's OK to change the live site's code.
 - [x] Make "check for update" compare the real files with GitHub: same files → match message, different files → send them to GitHub (old copy kept in history), newer GitHub version → copyable prompt.
 - [x] Articles tab: list site articles (src/content/articles) as published, auto-save drafts to the editor GitHub copy, private/lock, edit (open GitHub articles in the editor), publish/update and delete. Verified with a test article (publishing to the live site not tried).
 - [x] Update check: "تحديث" button now appears only when files differ (user's choice), and the "فحص التحديث" button marks a file difference with softer text plus a pulsing red dot. Covered by `src/components/UpdateCheck.test.tsx`.
+- [x] Dashboard home tab rebuilt from the real site: real counts and elements, ⠿ drag cards (editor and preview), mixed-articles/sections settings, scrollable fixed-height preview that matches the site and sits first on phones, undo/redo, saved draft, checks, protected publish.
