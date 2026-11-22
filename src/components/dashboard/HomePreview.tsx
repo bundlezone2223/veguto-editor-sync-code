@@ -10,7 +10,8 @@ import { BLOCK_INFO, type EditTarget } from "./block-info";
 import type { SiteData } from "./HomeLayoutEditor";
 
 type Device = "desktop" | "mobile";
-const WIDTH: Record<Device, number> = { desktop: 1280, mobile: 390 };
+/** The desktop preview fills the frame (at least this wide); the phone preview keeps a phone width. */
+const DESKTOP_MIN = 480, MOBILE_WIDTH = 390;
 
 /** Small seeded random, so "shuffle" gives a new order only when asked. */
 function seeded(seed: number) {
@@ -26,18 +27,15 @@ function seeded(seed: number) {
 
 function Card({ article, categories }: { article: FeedArticle; categories: SiteCategory[] | null }) {
   const cat = categories?.find((c) => c.id === article.category);
+  const label = cat ? `${cat.emoji} ${cat.title}` : article.category;
   return (
     <div className="vp-card flex h-full min-w-0 flex-col overflow-hidden">
       <div className="aspect-[2.037/1] w-full overflow-hidden bg-vp-muted">
         {article.thumbnail && <img src={article.thumbnail} alt="" loading="lazy" className="h-full w-full object-cover" />}
       </div>
-      <div className="flex flex-1 flex-col p-5">
-        <span className="max-w-full self-start truncate rounded-full bg-vp-primary-soft px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-vp-primary">
-          {cat ? `${cat.emoji} ${cat.title}` : article.category || "—"}
-        </span>
-        <h3 className="mt-3 line-clamp-2 min-h-[2.75em] break-words font-vp-sans text-xl font-semibold leading-snug" dir="auto">{article.title}</h3>
-        <p className="mt-3 line-clamp-3 h-18 text-sm leading-6 text-vp-muted-fg" dir="auto">{article.description}</p>
-        <span className="mt-auto pt-4 text-sm font-semibold text-vp-primary">Read article →</span>
+      <div className="p-1.5">
+        {label && <span className="inline-block max-w-full truncate rounded-full bg-vp-primary-soft px-1.5 text-[8px] uppercase text-vp-primary">{label}</span>}
+        <p className="mt-0.5 line-clamp-2 break-words font-semibold" dir="auto">{article.title}</p>
       </div>
     </div>
   );
@@ -50,16 +48,13 @@ function BlockView({ block, articles, categories, counts, seed }: {
     case "hero":
       return (
         <section className="vp-hero">
-          <p className="font-vp-display text-2xl text-vp-primary">{block.kicker}</p>
-          <h1 className="mx-auto mt-1 max-w-2xl font-vp-display text-5xl font-semibold leading-tight @3xl:text-6xl">{block.title}</h1>
-          <p className="mx-auto mt-4 max-w-lg text-base text-vp-fg/70">{block.subtitle}</p>
+          <p className="italic text-vp-primary">{block.kicker}</p>
+          <h1 className="text-xl font-bold italic">{block.title}</h1>
+          <p className="mx-auto mt-1 max-w-xs text-vp-muted-fg">{block.subtitle}</p>
           {block.showSearch && (
-            <div className="mx-auto mt-6 max-w-md">
-              <div className="flex h-14 w-full items-center gap-2 rounded-full border border-vp-border bg-vp-card pl-5 pr-2 shadow-sm">
-                <Search className="size-4 shrink-0 text-vp-muted-fg" />
-                <span className="flex-1 truncate text-left text-vp-muted-fg">{block.searchPlaceholder}</span>
-                <span className="rounded-full bg-vp-primary px-5 py-2 text-sm font-semibold text-vp-on-color">Search</span>
-              </div>
+            <div className="mx-auto mt-2 flex max-w-xs items-center justify-between gap-2 rounded-full bg-vp-card py-1 pl-3 pr-1 shadow-sm">
+              <span className="truncate text-vp-muted-fg">{block.searchPlaceholder}</span>
+              <span className="rounded-full bg-vp-primary px-2 py-0.5 text-vp-on-color">Search</span>
             </div>
           )}
         </section>
@@ -68,7 +63,7 @@ function BlockView({ block, articles, categories, counts, seed }: {
       const items = block.items.filter((s) => s.visible);
       if (items.length === 0) return null;
       return (
-        <section className="mt-6 grid grid-cols-2 gap-4 @3xl:grid-cols-4">
+        <section className="mt-3 grid gap-1.5" style={{ gridTemplateColumns: `repeat(${Math.min(4, items.length)}, minmax(0, 1fr))` }}>
           {items.map((s) => (
             <div key={s.id} className="vp-stat">
               <div className="vp-stat-num">{statValue(s, counts)}</div>
@@ -80,27 +75,27 @@ function BlockView({ block, articles, categories, counts, seed }: {
     }
     case "feed": {
       const rows = buildFeed(block, articles, block.mixed.shuffle || block.shelves.shuffle ? seeded(seed) : null);
-      if (rows.length === 0) return <div className="mt-8 rounded-xl border border-dashed border-vp-border p-6 text-center text-sm text-vp-muted-fg">No articles yet</div>;
+      if (rows.length === 0) return <div className="mt-3 rounded-lg border border-dashed border-vp-border p-3 text-center text-vp-muted-fg">No articles yet</div>;
       return (
         <div>
           {rows.map((row, i) => (
             <div key={i}>
               {row.grid && (
-                <section className="mt-8 grid gap-5 @min-[640px]:grid-cols-2">
+                <section className="mt-3 grid grid-cols-2 gap-1.5">
                   {row.grid.map((a) => <Card key={a.id} article={a} categories={categories} />)}
                 </section>
               )}
               {row.shelf && (
-                <div className="mt-12 mb-6">
+                <div className="mt-3">
                   <h2 className="vp-section-title">
-                    {row.shelf.section.emoji} {row.shelf.section.prefix} <span className="font-extrabold text-vp-primary">{row.shelf.section.highlight}</span>
+                    {row.shelf.section.emoji} {row.shelf.section.prefix} <span className="text-vp-primary">{row.shelf.section.highlight}</span>
                   </h2>
-                  <div className="vp-noscroll flex gap-5 overflow-x-auto pb-2">
+                  <div className="vp-noscroll flex gap-1.5 overflow-x-auto">
                     {row.shelf.items.map((a) => (
-                      <div key={a.id} className="w-[80%] shrink-0 @min-[640px]:w-[45%] @5xl:w-[31%]"><Card article={a} categories={categories} /></div>
+                      <div key={a.id} className="w-[calc((100%-0.75rem)/3)] shrink-0"><Card article={a} categories={categories} /></div>
                     ))}
                   </div>
-                  {block.shelves.showSeeAll && <div className="mt-4 text-right text-sm font-semibold text-vp-primary">See all {row.shelf.section.highlight} articles →</div>}
+                  {block.shelves.showSeeAll && <div className="mt-1 text-right text-[9px] font-semibold text-vp-primary">See all {row.shelf.section.highlight} articles →</div>}
                 </div>
               )}
             </div>
@@ -110,28 +105,27 @@ function BlockView({ block, articles, categories, counts, seed }: {
     }
     case "discord":
       return (
-        <section className="mt-10">
-          <div className="vp-discord-banner overflow-hidden rounded-2xl p-8 text-center shadow-xl">
-            <div className="text-4xl">{block.emoji}</div>
-            <h2 className="mt-2 font-vp-display text-3xl font-semibold @3xl:text-4xl">{block.title}</h2>
-            <p className="mx-auto mt-2 max-w-md text-sm opacity-90">{block.text}</p>
-            <span className="mt-5 inline-block rounded-full bg-vp-card px-7 py-2.5 text-sm font-bold text-vp-discord shadow-md">{block.button}</span>
+        <section className="mt-3">
+          <div className="vp-discord-banner overflow-hidden rounded-xl px-3 py-4 text-center shadow-sm">
+            <div className="text-xl">{block.emoji}</div>
+            <p className="text-sm font-bold italic">{block.title}</p>
+            <p className="mx-auto mt-1 max-w-xs text-[10px] opacity-90">{block.text}</p>
+            <span className="mt-2 inline-block rounded-full bg-vp-card px-3 py-0.5 font-semibold text-vp-discord">{block.button}</span>
           </div>
         </section>
       );
     case "tags": {
       const tags = countTags(articles).slice(0, block.count);
       return (
-        <div>
+        <div className="mt-3">
           <h2 className="vp-section-title">{block.title}</h2>
-          <section>
-            <div className="flex flex-wrap gap-2">
-              {tags.map((t) => (
-                <span key={t.slug} className="rounded-full border border-vp-border bg-vp-card px-3.5 py-1.5 text-sm text-vp-muted-fg">#{t.tag} <span className="text-xs opacity-60">{t.count}</span></span>
-              ))}
-            </div>
-            {block.showSeeAll && <div className="mt-6 text-right text-sm font-semibold text-vp-primary">See all tags →</div>}
-          </section>
+          <div className="flex flex-wrap gap-1">
+            {tags.length === 0 && <span className="text-[9px] text-vp-muted-fg">No tags yet</span>}
+            {tags.map((t) => (
+              <span key={t.slug} className="rounded-full border border-vp-border bg-vp-card px-2 py-0.5 text-[10px] text-vp-muted-fg">#{t.tag} <span className="opacity-60">{t.count}</span></span>
+            ))}
+          </div>
+          {block.showSeeAll && <div className="mt-1 text-right text-[9px] font-semibold text-vp-primary">See all tags →</div>}
         </div>
       );
     }
@@ -145,17 +139,15 @@ function Sidebar({ config }: { config: HomeConfig }) {
     ...(sb.showSections ? getBlock(config, "feed").sections.filter((s) => s.visible).map((s) => ({ label: `${s.emoji} ${s.highlight}`, group: "Sections" })) : []),
   ];
   return (
-    <div className="rounded-xl border border-vp-border bg-vp-card p-5">
-      <h2 className="h-9 font-vp-display text-3xl font-semibold text-vp-primary">{sb.title}</h2>
-      <nav className="mt-3">
-        {links.map((item, i) => (
-          <div key={i}>
-            {(i === 0 || links[i - 1]?.group !== item.group) && <p className="flex h-7 items-center px-3 text-xs font-semibold uppercase text-vp-muted-fg">{item.group}</p>}
-            <span className="vp-sidebar-link">{item.label}</span>
-          </div>
-        ))}
-      </nav>
-      {sb.discordButton.visible && <div className="mt-3 flex h-10 items-center justify-center gap-2 rounded-xl bg-vp-discord px-4 text-sm font-semibold text-vp-on-color">{sb.discordButton.label}</div>}
+    <div className="space-y-1 rounded-xl border border-vp-border bg-vp-card p-2">
+      <p className="font-bold italic text-vp-primary">{sb.title}</p>
+      {links.map((item, i) => (
+        <div key={i}>
+          {(i === 0 || links[i - 1]?.group !== item.group) && <p className={`text-[9px] font-semibold uppercase text-vp-muted-fg ${i > 0 ? "pt-1" : ""}`}>{item.group}</p>}
+          <p className="truncate">{item.label}</p>
+        </div>
+      ))}
+      {sb.discordButton.visible && <p className="mt-1 rounded-md bg-vp-accent py-1 text-center text-vp-on-color">{sb.discordButton.label}</p>}
     </div>
   );
 }
@@ -203,7 +195,7 @@ export function HomePreview({ config, onChange, site, editorArticles, selected, 
     return () => ro.disconnect();
   }, []);
 
-  const width = WIDTH[device];
+  const width = device === "desktop" ? Math.max(DESKTOP_MIN, frameWidth) : MOBILE_WIDTH;
   const zoom = frameWidth ? Math.min(1, frameWidth / width) : 0.4;
   const articles = source === "site" ? site.articles : editorArticles;
   const counts = useMemo<SiteCounts>(() => ({ articles: articles.length, categories: site.counts.categories, tags: countTags(articles).length }), [articles, site.counts.categories]);
@@ -215,7 +207,7 @@ export function HomePreview({ config, onChange, site, editorArticles, selected, 
     if (fromPreview.current) { fromPreview.current = false; return; }
     const box = frame.current, el = box?.querySelector<HTMLElement>(`[data-block="${selected}"]`);
     if (!box || !el) return;
-    box.scrollTo({ top: Math.max(0, el.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - 70 * zoom), behavior: "smooth" });
+    box.scrollTo({ top: Math.max(0, el.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - 40 * zoom), behavior: "smooth" });
   }, [selected, zoom]);
 
   const select = (t: EditTarget) => { fromPreview.current = true; onSelect(t); };
@@ -254,18 +246,13 @@ export function HomePreview({ config, onChange, site, editorArticles, selected, 
           className="vp @container mx-auto min-h-full"
           style={{ width, zoom, ["--vp-z" as string]: zoom }}
         >
-          <header className="sticky top-0 z-30 border-b border-vp-border bg-vp-card/90 px-4 py-3 backdrop-blur @3xl:px-10">
-            <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3">
-              <div className="flex items-center gap-2">
-                <span className="font-vp-display text-3xl font-semibold text-vp-primary">Veguto</span>
-                <span className="hidden text-xs font-medium uppercase tracking-[0.25em] text-vp-muted-fg @min-[640px]:inline">wiki</span>
-              </div>
-              <nav className="flex items-center gap-3 text-sm font-medium @3xl:gap-4">
-                <span>🌙 Anime</span><span>🎮 Gaming</span><Search className="size-5" /><Menu className="size-5" />
-              </nav>
-            </div>
+          <header className="sticky top-0 z-30 flex items-center justify-between gap-2 border-b border-vp-border bg-vp-card/90 px-3 py-1.5 backdrop-blur">
+            <span className="font-bold italic text-vp-primary">Veguto <span className="text-[9px] font-medium not-italic uppercase tracking-[0.2em] text-vp-muted-fg">wiki</span></span>
+            <nav className="flex items-center gap-2 text-[10px]">
+              <span>🌙 Anime</span><span>🎮 Gaming</span><Search className="size-3" /><Menu className="size-3" />
+            </nav>
           </header>
-          <div className={`mx-auto grid w-full max-w-7xl gap-8 px-3 pt-6 @min-[640px]:px-5 @5xl:px-8 ${config.sidebar.visible ? "@5xl:grid-cols-[minmax(0,1fr)_280px]" : ""}`}>
+          <div className={`grid w-full gap-3 p-3 ${config.sidebar.visible ? "@min-[440px]:grid-cols-[minmax(0,1fr)_9rem]" : ""}`}>
             <main className="min-w-0">
               {blocks.length === 0 && <div className="vp-hidden-block">كل العناصر مخفية</div>}
               <SortableList items={blocks} getId={(b) => b.type} onReorder={reorder} zoom={zoom}>
@@ -279,20 +266,16 @@ export function HomePreview({ config, onChange, site, editorArticles, selected, 
               </SortableList>
             </main>
             {config.sidebar.visible && (
-              <aside className="hidden min-w-0 @5xl:block">
-                <div className="sticky top-24">
+              <aside className="hidden min-w-0 @min-[440px]:block">
+                <div className="sticky top-10">
                   <Editable target="sidebar" handle={false} selected={selected === "sidebar"} onSelect={select}><Sidebar config={config} /></Editable>
                 </div>
               </aside>
             )}
           </div>
-          <footer className="mt-16">
-            <div className="h-[2px] w-full bg-vp-primary" />
-            <div className="bg-vp-card/60 px-6 pt-12 pb-6">
-              <p className="font-vp-display text-3xl font-semibold text-vp-primary">Veguto</p>
-              <p className="text-xs uppercase tracking-[0.25em] text-vp-muted-fg">wiki</p>
-              <p className="mt-3 max-w-sm text-sm text-vp-muted-fg">Tiny guides for the things we love online — anime, cozy games, art, VTubers and aesthetics. 🌸</p>
-            </div>
+          <footer className="mt-3 border-t-2 border-vp-primary bg-vp-card/60 px-3 py-3">
+            <p className="font-bold italic text-vp-primary">Veguto <span className="text-[9px] font-medium not-italic uppercase tracking-[0.2em] text-vp-muted-fg">wiki</span></p>
+            <p className="mt-1 max-w-xs text-[10px] text-vp-muted-fg">Tiny guides for the things we love online — anime, cozy games, art, VTubers and aesthetics. 🌸</p>
           </footer>
         </div>
       </div>

@@ -48,7 +48,7 @@ afterEach(() => {
 });
 
 describe("update check button and update window", () => {
-  it("checks on page entry and hides the update button and red dot when files are identical", async () => {
+  it("checks on page entry, hides the red dot when files are identical, and always offers the update button", async () => {
     sync.mockResolvedValue(SAME_FILES);
     render(<UpdateCheck />);
     await finishAutomaticCheck();
@@ -56,7 +56,7 @@ describe("update check button and update window", () => {
     expect(document.querySelector(".check-dot")).toBeNull();
     showResult();
     expect(screen.getByText(/نسختك مطابقة لـ GitHub/)).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "تحديث" })).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "تحديث" })).toBeInTheDocument();
   });
 
   it("shows a red dot after automatic checking, then reveals the update button on demand", async () => {

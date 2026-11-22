@@ -1,0 +1,15 @@
+{
+  "kind": "editor-sync",
+  "version": "1.6.1",
+  "previousVersion": "1.6.0",
+  "previousSha": "fe13600e6ac3b730d9bb0bbdaf86855f0de4d173",
+  "savedAt": "2026-11-22T18:51:09.478Z",
+  "added": [],
+  "changed": [
+    "src/components/UpdateCheck.test.tsx",
+    "src/components/UpdateCheck.tsx",
+    "src/components/dashboard/HomePreview.tsx",
+    "src/version.ts"
+  ],
+  "removed": []
+}
