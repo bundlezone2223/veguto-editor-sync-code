@@ -25,3 +25,5 @@
 - [x] Dashboard home tab rebuilt from the real site: real counts and elements, ⠿ drag cards (editor and preview), mixed-articles/sections settings, scrollable fixed-height preview that matches the site and sits first on phones, undo/redo, saved draft, checks, protected publish.
 - [x] Add Main site tab with dev-only local workspace, safe GitHub pull/publish, interactive preview and full file operations; no live-site publish performed.
 - [x] Add text copy to GitHub files; 112 tests pass; verified real-site preview, copy/edit/confirm/read-back and desktop/mobile navigation without overflow.
+- [x] Replace ready-made article ZIP with TS selection and drag-and-drop; verified drop, rejection of ZIP, and persistence after reload.
+- [x] Add download for every open GitHub file, preserving binary bytes and current text edits; verified real package.json, binary favicon.ico, and edited text downloads (23 focused tests pass).

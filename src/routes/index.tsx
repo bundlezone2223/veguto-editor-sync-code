@@ -4,7 +4,8 @@ import { MoreVertical, Pencil, Trash2 } from "lucide-react";
 import { WikiLayout } from "@/components/WikiLayout";
 import { UpdateCheck } from "@/components/UpdateCheck";
 import { ProjectMetaModal, type ProjectMetaValues } from "@/components/ProjectMetaModal";
-import { deleteProject, loadProjects, newId, upsertProject, type Project } from "@/lib/projects-store";
+import type { ImportedArticle } from "@/lib/article-file";
+import { deleteProject, loadProjects, newArticleId, newId, upsertProject, type Project } from "@/lib/projects-store";
 import { installSampleArticles } from "@/lib/sample-article";
 import { forgetDraft } from "@/lib/article-library";
 import { toast } from "sonner";
@@ -58,6 +59,20 @@ function HomePage() {
       sections: [],
     };
     if (!(await upsertProject(p))) return;
+    setOpen(false);
+    navigate({ to: "/studio/$id", params: { id: p.id } });
+  };
+
+  const handleArticleImport = async (a: ImportedArticle) => {
+    const now = Date.now();
+    const slug = (a.title || "untitled").toLowerCase().replace(/[^a-z0-9-]+/g, "-").replace(/^-+|-+$/g, "") || "untitled";
+    const p: Project = {
+      id: newId(), title: a.title, excerpt: a.excerpt, thumbnail: a.hero, categories: a.categories, tags: a.tags,
+      createdAt: now, updatedAt: now,
+      meta: { title: a.title, slug, articleId: a.articleId || await newArticleId(), excerpt: a.excerpt, categories: a.categories, tags: a.tags, hero: a.hero },
+      sections: a.sections,
+    };
+    if (!(await upsertProject(p))) throw new Error("تعذر حفظ المقال.");
     setOpen(false);
     navigate({ to: "/studio/$id", params: { id: p.id } });
   };
@@ -128,6 +143,7 @@ function HomePage() {
         <ProjectMetaModal
           onClose={() => setOpen(false)}
           onSubmit={handleCreated}
+          onImportArticle={handleArticleImport}
         />
       )}
       {editingProject && (

@@ -1,0 +1,22 @@
+{
+  "kind": "editor-sync",
+  "version": "1.7.3",
+  "previousVersion": "1.7.0",
+  "previousSha": "3fcf02d97a1b97dc71e73d58b22db2a939d9ee65",
+  "savedAt": "2026-11-27T17:23:38.795Z",
+  "added": [
+    "src/lib/article-file.test.ts",
+    "src/lib/article-file.ts",
+    "src/lib/file-download.test.ts",
+    "src/lib/file-download.ts"
+  ],
+  "changed": [
+    "roadmap.md",
+    "src/components/ProjectMetaModal.tsx",
+    "src/components/dashboard/GithubPanel.tsx",
+    "src/routes/index.tsx",
+    "src/version.ts",
+    "tsconfig.tsbuildinfo"
+  ],
+  "removed": []
+}

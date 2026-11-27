@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { ImagePlus, Loader2 } from "lucide-react";
+import { FileCode, ImagePlus, Loader2 } from "lucide-react";
+import { readArticleFile, type ImportedArticle } from "@/lib/article-file";
 import { Button } from "@/components/ui/button";
 import { ThumbnailFramePreview } from "@/components/ThumbnailFramePreview";
 import { fetchImageAsBase64 } from "@/lib/image-fetch.functions";
@@ -25,13 +26,28 @@ export function ProjectMetaModal({
   submitLabel = "إنشاء المشروع",
   onClose,
   onSubmit,
+  onImportArticle,
 }: {
   initial?: Partial<ProjectMetaValues>;
   title?: string;
   submitLabel?: string;
   onClose: () => void;
   onSubmit: (v: ProjectMetaValues) => void;
+  onImportArticle?: (a: ImportedArticle) => void | Promise<void>;
 }) {
+  const importBusy = useRef(false);
+  const [dragging, setDragging] = useState(false);
+  const articleRef = useRef<HTMLInputElement>(null);
+  const [articleBusy, setArticleBusy] = useState(false);
+  const [articleError, setArticleError] = useState("");
+  const pickArticle = async (f: File | null) => {
+    if (!f || !onImportArticle || importBusy.current) return;
+    importBusy.current = true;
+    setArticleBusy(true); setArticleError("");
+    try { await onImportArticle(await readArticleFile(f)); }
+    catch (e) { setArticleError(e instanceof Error ? e.message : "تعذرت قراءة ملف TS."); }
+    finally { importBusy.current = false; setArticleBusy(false); }
+  };
   const [titleV, setTitle] = useState(initial?.title ?? "");
   const [excerpt, setExcerpt] = useState(initial?.excerpt ?? "");
   const [thumbnail, setThumbnail] = useState(initial?.thumbnail ?? "");
@@ -99,11 +115,15 @@ export function ProjectMetaModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50-sm" onClick={() => { if (!metadataBusy) onClose(); }}>
-      <div dir="rtl" onClick={(e) => e.stopPropagation()} className="w-full max-w-2xl max-h-[90vh] overflow-auto bg-card border border-border rounded-2xl shadow-xl p-5 md:p-6">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50-sm" onClick={() => { if (!metadataBusy && !articleBusy) onClose(); }}>
+      <div dir="rtl" onClick={(e) => e.stopPropagation()}
+        onDragOver={(e) => { if (onImportArticle && e.dataTransfer.types.includes("Files")) { e.preventDefault(); e.dataTransfer.dropEffect = "copy"; setDragging(true); } }}
+        onDragLeave={(e) => { if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setDragging(false); }}
+        onDrop={(e) => { if (!onImportArticle) return; e.preventDefault(); setDragging(false); void pickArticle(e.dataTransfer.files[0] ?? null); }}
+        className="w-full max-w-2xl max-h-[90vh] overflow-auto bg-card border border-border rounded-2xl shadow-xl p-5 md:p-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg md:text-xl font-bold">{title}</h2>
-          <button disabled={metadataBusy} onClick={onClose} className="w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center disabled:opacity-50">✕</button>
+          <button disabled={metadataBusy || articleBusy} onClick={onClose} className="w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center disabled:opacity-50">✕</button>
         </div>
 
         {/* Top: title+description on right, thumbnail on left (RTL) */}
@@ -175,7 +195,7 @@ export function ProjectMetaModal({
                     aria-label="JSON بيانات الميتاداتا"
                     rows={7}
                     value={metadataJson}
-                    disabled={metadataBusy}
+                    disabled={metadataBusy || articleBusy}
                     onChange={(event) => { setMetadataJson(event.target.value); setMetadataError(""); }}
                     placeholder={'{\n  "title": "Article title",\n  "description": "Short card description",\n  "thumbnail": "https://example.com/thumbnail.jpg",\n  "categories": ["Guides"],\n  "tags": ["topic", "wiki"]\n}'}
                     className={`${inputCls} resize-y font-mono text-xs`}
@@ -254,9 +274,21 @@ export function ProjectMetaModal({
           />
         </div>
 
+        {onImportArticle && (
+          <div className={`mt-6 border-t pt-4 ${dragging ? "border-accent-pink bg-muted" : "border-border"}`}>
+            <input ref={articleRef} type="file" accept=".ts" hidden aria-label="اختيار مقال TS" onChange={(e) => { void pickArticle(e.target.files?.[0] ?? null); e.target.value = ""; }} />
+            <Button type="button" variant="outline" className="w-full" disabled={articleBusy} onClick={() => articleRef.current?.click()}>
+              {articleBusy ? <Loader2 className="animate-spin" /> : <FileCode />}
+              {articleBusy ? "جارٍ استيراد المقال…" : dragging ? "إفلات ملف TS" : "إضافة مقال جاهز (TS)"}
+            </Button>
+            
+            {articleError && <p role="alert" className="mt-1 text-xs text-destructive">{articleError}</p>}
+          </div>
+        )}
+
         <div className="mt-6 flex items-center justify-end gap-2">
-          <button disabled={metadataBusy} onClick={onClose} className="text-sm px-4 py-2 rounded-lg border border-border hover:bg-muted disabled:opacity-50">إلغاء</button>
-          <button disabled={metadataBusy} onClick={submit} className="text-sm px-5 py-2 rounded-lg bg-accent-pink text-white hover:opacity-90 disabled:opacity-50">{submitLabel}</button>
+          <button disabled={metadataBusy || articleBusy} onClick={onClose} className="text-sm px-4 py-2 rounded-lg border border-border hover:bg-muted disabled:opacity-50">إلغاء</button>
+          <button disabled={metadataBusy || articleBusy} onClick={submit} className="text-sm px-5 py-2 rounded-lg bg-accent-pink text-white hover:opacity-90 disabled:opacity-50">{submitLabel}</button>
         </div>
       </div>
     </div>

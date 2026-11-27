@@ -1,13 +1,14 @@
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
 import {
-  Check, ChevronLeft, FilePen, Save, ClipboardPaste, Copy, ExternalLink, FileArchive, FileText, Folder, History, Loader2, Pencil, RefreshCw,
+  Download, Check, ChevronLeft, FilePen, Save, ClipboardPaste, Copy, ExternalLink, FileArchive, FileText, Folder, History, Loader2, Pencil, RefreshCw,
   RotateCcw, Scissors, Trash2, Upload, CheckCircle2, X, XCircle,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
-  HISTORY_REPO, branchHead, checkRepoAccess, commitChanges, commitFiles, commitTreeEdits, createTextBlob, listCommits, listTree, readRepoText,
+  HISTORY_REPO, branchHead, checkRepoAccess, commitChanges, commitFiles, commitTreeEdits, createTextBlob, gh, SERVER_TOKEN, listCommits, listTree,
   recordHistory, restoreVersion, type ChangedFile, type CommitInfo, type GithubSettings, type RepoFile,
 } from "@/lib/github-api";
+import { decodeBase64Bytes, deliverFile } from "@/lib/file-download";
 import { readZip } from "@/lib/zip-upload";
 import {
   LOCAL_SHA, baseName, copyPaths, isLocalSha, listDir, movePaths, parentDir, removePaths, renamePath, setFileSha, treeChanges, uploadDrafts,
@@ -116,12 +117,25 @@ function FileManager({ repo, branch, gitRef, onBackToLatest, onChanged }: {
 
   const openFile = async (path: string) => {
     const sha = work[path]?.sha;
-    if (isLocalSha(sha)) { setOpen({ path, text: drafts[sha] ?? "", editable: true }); return; }
-    const src = sourceOf(path);
+    if (isLocalSha(sha)) {
+      const text = drafts[sha] ?? "";
+      setOpen({ path, text, editable: true, download: new Blob([text], { type: "text/plain;charset=utf-8" }) });
+      return;
+    }
     setOpen({ path, text: null, editable: false });
-    const text = src ? await readRepoText(repo, loaded?.sha ?? gitRef, src) : null;
-    if (text === null) { setOpen({ path, text: "تعذر فتح الملف", editable: false }); return; }
-    setOpen({ path, text, editable: isTextFile(path, text), base: sha ? { sha, text } : undefined });
+    try {
+      if (!sha) throw new Error("الملف غير موجود");
+      const blob = await gh(SERVER_TOKEN, `/repos/${repo}/git/blobs/${sha}`);
+      if (blob?.encoding !== "base64" || typeof blob.content !== "string") throw new Error("تعذر قراءة محتوى الملف");
+      const bytes = decodeBase64Bytes(blob.content);
+      const text = new TextDecoder().decode(bytes);
+      const textFile = isTextFile(path, text) && !text.includes("\uFFFD");
+      setOpen({ path, text: textFile ? text : "ملف غير نصي", editable: textFile,
+        base: { sha, text }, download: new Blob([bytes], { type: textFile ? "text/plain;charset=utf-8" : "application/octet-stream" }) });
+    } catch (error) {
+      setOpen({ path, text: "تعذر فتح الملف", editable: false });
+      toast.error(error instanceof Error ? error.message : "تعذر فتح الملف");
+    }
   };
 
   /** Keeps the edited text locally; Confirm later writes it to GitHub together with the other changes. */
@@ -201,6 +215,11 @@ function FileManager({ repo, branch, gitRef, onBackToLatest, onChanged }: {
           <div className="flex flex-wrap items-center gap-1">
             <GhostButton onClick={() => { if (leaveEditor()) setOpen(null); }}><ChevronLeft size={14} /> رجوع</GhostButton>
             <span className="flex-1" />
+            <GhostButton disabled={!open.download} onClick={() => {
+              if (!open.download) return;
+              const file = open.editable ? new Blob([open.draft ?? open.text ?? ""], { type: "text/plain;charset=utf-8" }) : open.download;
+              void deliverFile(file, baseName(open.path)).catch(() => toast.error("تعذر تنزيل الملف"));
+            }} ariaLabel="تنزيل الملف"><Download size={14} /> تنزيل الملف</GhostButton>
             {open.text !== null && open.editable && <GhostButton onClick={() => {
               void navigator.clipboard.writeText(open.draft ?? open.text ?? "").then(() => toast.success("نُسخ نص الملف")).catch(() => toast.error("تعذر نسخ النص؛ تحقق من إذن الحافظة"));
             }}><Copy size={14} /> نسخ النص</GhostButton>}
@@ -262,6 +281,7 @@ function FileManager({ repo, branch, gitRef, onBackToLatest, onChanged }: {
 type OpenFile = {
   path: string;
   text: string | null;
+  download?: Blob;
   /** Text files of the latest version can be edited. */
   editable: boolean;
   /** Content as loaded from GitHub, so typing it back unchanged leaves no change. */
