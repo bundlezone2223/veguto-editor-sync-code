@@ -1,0 +1,24 @@
+{
+  "kind": "editor-sync",
+  "version": "1.6.2",
+  "previousVersion": "1.6.1",
+  "previousSha": "8e04a432d2f0adf89a856b344ea661acc74cf772",
+  "savedAt": "2026-11-27T15:44:52.302Z",
+  "added": [
+    "scripts/site-dev-plugin.ts",
+    "scripts/site-workspace.ts",
+    "src/components/dashboard/SitePanel.tsx",
+    "src/lib/site-workspace-client.ts",
+    "src/lib/site-workspace.test.ts"
+  ],
+  "changed": [
+    "roadmap.md",
+    "scripts/github-sync.py",
+    "src/components/dashboard/GithubPanel.tsx",
+    "src/lib/app-update.ts",
+    "src/lib/source-sync.server.ts",
+    "src/routes/dashboard.tsx",
+    "src/version.ts"
+  ],
+  "removed": []
+}

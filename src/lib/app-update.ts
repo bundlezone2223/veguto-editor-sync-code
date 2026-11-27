@@ -79,6 +79,7 @@ export const RUNTIME_FILES = [
   "src/router.tsx", "src/server.ts", "src/start.ts", "src/routeTree.gen.ts", "src/routes/README.md",
   "src/lib/error-capture.ts", "src/lib/error-page.ts", "src/lib/lovable-error-reporting.ts",
   "src/test/",
+  "site/", ".site-sync.json", ".site-stage/", ".site-backup/", ".site-preview-runtime/",
 ];
 
 export function isRuntimeFile(p: string) {

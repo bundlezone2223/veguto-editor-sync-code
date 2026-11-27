@@ -1,12 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { AlertTriangle, CheckCircle2, FileJson, Github, LayoutTemplate, Loader2, Newspaper, Redo2, RefreshCw, RotateCcw, Send, Undo2 } from "lucide-react";
+import { AlertTriangle, CheckCircle2, FileJson, Github, Globe, LayoutTemplate, Loader2, Newspaper, Redo2, RefreshCw, RotateCcw, Send, Undo2 } from "lucide-react";
 import { toast } from "sonner";
 import { WikiLayout } from "@/components/WikiLayout";
 import { HomeLayoutEditor, type SiteData } from "@/components/dashboard/HomeLayoutEditor";
 import { HomePreview } from "@/components/dashboard/HomePreview";
 import { ArticlesPanel } from "@/components/dashboard/ArticlesPanel";
 import { GithubPanel } from "@/components/dashboard/GithubPanel";
+import { SitePanel } from "@/components/dashboard/SitePanel";
 import { GhostButton, PrimaryButton } from "@/components/dashboard/ui";
 import type { EditTarget } from "@/components/dashboard/block-info";
 import { loadProjects, type Project } from "@/lib/projects-store";
@@ -31,10 +32,11 @@ export const Route = createFileRoute("/dashboard")({
   component: DashboardPage,
 });
 
-type Tab = "home" | "articles" | "github";
+type Tab = "home" | "articles" | "site" | "github";
 const TABS: { id: Tab; label: string; Icon: typeof Github }[] = [
   { id: "home", label: "الصفحة الرئيسية", Icon: LayoutTemplate },
   { id: "articles", label: "المقالات", Icon: Newspaper },
+  { id: "site", label: "الموقع الرئيسي", Icon: Globe },
   { id: "github", label: "GitHub", Icon: Github },
 ];
 
@@ -87,6 +89,7 @@ function DashboardPage() {
 
       {tab === "home" && <HomeTab projects={projects} />}
       {tab === "articles" && <ArticlesPanel projects={projects} onProjectsChanged={reloadProjects} />}
+      <div hidden={tab !== "site"}><SitePanel active={tab === "site"} /></div>
       {tab === "github" && <GithubPanel settings={settings} onChange={setSettings} />}
     </WikiLayout>
   );

@@ -201,6 +201,9 @@ function FileManager({ repo, branch, gitRef, onBackToLatest, onChanged }: {
           <div className="flex flex-wrap items-center gap-1">
             <GhostButton onClick={() => { if (leaveEditor()) setOpen(null); }}><ChevronLeft size={14} /> رجوع</GhostButton>
             <span className="flex-1" />
+            {open.text !== null && open.editable && <GhostButton onClick={() => {
+              void navigator.clipboard.writeText(open.draft ?? open.text ?? "").then(() => toast.success("نُسخ نص الملف")).catch(() => toast.error("تعذر نسخ النص؛ تحقق من إذن الحافظة"));
+            }}><Copy size={14} /> نسخ النص</GhostButton>}
             {open.draft === undefined ? (
               editable && open.editable && <GhostButton onClick={() => setOpen({ ...open, draft: open.text ?? "" })}><FilePen size={14} /> التعديل</GhostButton>
             ) : (

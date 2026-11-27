@@ -23,7 +23,8 @@ RUNTIME = (".lovable/", ".npmrc", ".prettierignore", ".prettierrc", ".gitignore"
            "bun.lock", "bunfig.toml", "package.json", "package-lock.json", "components.json", "eslint.config.js",
            "tsconfig.json", "vite.config.ts", "vitest.config.ts", "wrangler.json",
            "src/router.tsx", "src/server.ts", "src/start.ts", "src/routeTree.gen.ts", "src/routes/README.md",
-           "src/lib/error-capture.ts", "src/lib/error-page.ts", "src/lib/lovable-error-reporting.ts", "src/test/")
+           "src/lib/error-capture.ts", "src/lib/error-page.ts", "src/lib/lovable-error-reporting.ts", "src/test/",
+           "site/", ".site-sync.json", ".site-stage/", ".site-backup/", ".site-preview-runtime/")
 
 
 def is_runtime(p):

@@ -13,7 +13,7 @@ import {
 } from "./app-update";
 
 const API = `https://api.github.com/repos/${UPDATE_REPO}`;
-const SKIP_DIRS = new Set([".git", "node_modules", ".jj"]);
+const SKIP_DIRS = new Set([".git", "node_modules", ".jj", "site", ".site-stage", ".site-backup", ".site-preview-runtime"]);
 
 export function gitBlobSha(buf: Uint8Array): string {
   return createHash("sha1").update(`blob ${buf.byteLength}\0`).update(buf).digest("hex");
@@ -36,7 +36,7 @@ export async function readLocalFiles(root: string): Promise<Map<string, Buffer>>
       if (e.isDirectory()) {
         if (!ignored(rules, `${rel}/`)) await walk(rel, rules);
       } else if (e.isFile()) {
-        if (e.name.startsWith(".env") || ignored(rules, rel)) continue;
+        if (e.name.startsWith(".env") || e.name === ".site-sync.json" || ignored(rules, rel)) continue;
         out.set(rel, await readFile(path.join(root, rel)));
       }
     }

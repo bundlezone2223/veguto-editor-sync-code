@@ -23,3 +23,5 @@
 - [x] Articles tab: list site articles (src/content/articles) as published, auto-save drafts to the editor GitHub copy, private/lock, edit (open GitHub articles in the editor), publish/update and delete. Verified with a test article (publishing to the live site not tried).
 - [x] Update check: "تحديث" button now appears only when files differ (user's choice), and the "فحص التحديث" button marks a file difference with softer text plus a pulsing red dot. Covered by `src/components/UpdateCheck.test.tsx`.
 - [x] Dashboard home tab rebuilt from the real site: real counts and elements, ⠿ drag cards (editor and preview), mixed-articles/sections settings, scrollable fixed-height preview that matches the site and sits first on phones, undo/redo, saved draft, checks, protected publish.
+- [x] Add Main site tab with dev-only local workspace, safe GitHub pull/publish, interactive preview and full file operations; no live-site publish performed.
+- [x] Add text copy to GitHub files; 112 tests pass; verified real-site preview, copy/edit/confirm/read-back and desktop/mobile navigation without overflow.
