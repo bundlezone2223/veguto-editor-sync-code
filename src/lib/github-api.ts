@@ -206,3 +206,16 @@ export async function branchHead(repo: string, branch: string): Promise<string |
   const ref = await gh(SERVER_TOKEN, `/repos/${repo}/git/ref/heads/${encodeURIComponent(branch)}`).catch(emptyRepo);
   return ref?.object?.sha ?? null;
 }
+
+/** Stores Base64 content (any file type) as a GitHub blob and returns its sha. */
+export async function createBase64Blob(repo: string, base64: string): Promise<string> {
+  const blob = await gh(SERVER_TOKEN, `/repos/${repo}/git/blobs`, { method: "POST", body: JSON.stringify({ content: base64, encoding: "base64" }) });
+  return blob.sha as string;
+}
+
+/** Reads a blob by sha as text; null when it looks binary or cannot be read. */
+export async function readBlobText(repo: string, sha: string): Promise<string | null> {
+  const r = await raw(`/repos/${repo}/git/blobs/${sha}`, { accept: "application/vnd.github.raw+json" });
+  if (r.status >= 300) throw new Error(`GitHub ${r.status}: تعذر قراءة الملف`);
+  return r.text.includes("\u0000") || r.text.includes("\uFFFD") ? null : r.text;
+}

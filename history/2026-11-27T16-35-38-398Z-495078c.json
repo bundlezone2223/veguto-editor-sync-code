@@ -1,0 +1,25 @@
+{
+  "kind": "editor-sync",
+  "version": "1.7.0",
+  "previousVersion": "1.6.2",
+  "previousSha": "495078c403b954a5a494024571c618ed544e8c90",
+  "savedAt": "2026-11-27T16:35:38.398Z",
+  "added": [
+    "src/components/dashboard/SiteFrame.tsx",
+    "src/lib/line-diff.test.ts",
+    "src/lib/line-diff.ts",
+    "src/routes/site.tsx",
+    "tsconfig.tsbuildinfo"
+  ],
+  "changed": [
+    "src/components/dashboard/SitePanel.tsx",
+    "src/lib/github-api.ts",
+    "src/version.ts"
+  ],
+  "removed": [
+    "scripts/site-dev-plugin.ts",
+    "scripts/site-workspace.ts",
+    "src/lib/site-workspace-client.ts",
+    "src/lib/site-workspace.test.ts"
+  ]
+}
